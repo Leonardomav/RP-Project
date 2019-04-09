@@ -13,7 +13,6 @@ def categorize_data(data):
     for c in col:
         replace_map = {c: {k: v for k, v in zip(labels, list(range(1, len(labels) + 1)))}}
         data.replace(replace_map, inplace=True)
-        data[c].astype('category')
 
     labels = data['Location'].astype('category').cat.categories.tolist()
     replace_map = {'Location': {k: v for k, v in zip(labels, list(range(1, len(labels) + 1)))}}
@@ -34,20 +33,19 @@ def main():
     data = data.dropna(0, how='any')
 
     #change Yes and No to 1 and 0
-    data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0}).astype('category')
-    data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0}).astype('category')
+    data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
+    data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
 
     data = categorize_data(data)
     data_date_loc = data[['Date', 'Location']]
 
     #normaliza data
     data_normalize=data.loc[:, ~data.columns.isin(['Date', 'Location'])]
+
     x = data_normalize.values
     scaler=sklearn.preprocessing.StandardScaler()
     x_scaled=scaler.fit_transform(x)
     data_normalize = pandas.DataFrame(x_scaled, columns = data_normalize.columns)
-
-    print(data_normalize.head())
 
     # Print general info about the data
     #data_info.print_general_information(data)
