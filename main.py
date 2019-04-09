@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('TkAgg')
 from matplotlib import pyplot
 import numpy
 from pandas import read_csv, set_option
@@ -7,7 +9,7 @@ import scipy
 import data_info
 import features_selection
 
-# Load data set
+# Load data se
 filename = 'weatherAUS.csv'
 data_raw = read_csv(filename)
 
@@ -29,7 +31,7 @@ data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
 # data_info.describe_column(data, 'Location')
 
 # Print correlation between all features or between two if specified
-data_info.correlation_info(data, 'pearson')
+# data_info.correlation_info(data, 'pearson')
 
 # Print data skew
 # print(data.skew())
