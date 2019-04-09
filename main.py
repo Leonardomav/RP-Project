@@ -1,12 +1,46 @@
 import matplotlib
 matplotlib.use('TkAgg')
-from matplotlib import pyplot
 import numpy
 import pandas
 import sklearn.preprocessing
 import scipy
+
 import data_info
 import features_selection
+
+
+# [NOTE] Go back and forward to the Pre-processing, Feature reduction and Feature Selection phases until you are
+# satisfied with the results. It is a good idea to keep track of evolution of the performance of your algorithm during
+# this process. Try to show these trends in your final report, to be able to fundament all the issues involved (
+# choosing parameters, model fit, etc.)
+
+#TODO
+# "Define the appropriate performance metrics and justify your choices!"
+
+#TODO
+# See how Feature Selection and Dimension Reduction affect performance
+
+#TODO FS
+# Kolmogorov-Sirnov
+# ROC
+
+#TODO DR
+# PCA - META 1
+# LDA - META 1
+
+#TODO CLASS
+# Euclidean minimum distance classifier [LINEAR] - META 1
+# FISHER Linear Discriminant [LINEAR] - META 1
+# Mahalanobis minimum distance classifier [LINEAR]
+# K-Nearest Neighbour (?)
+# Bayes Classifier (?)
+
+
+#TODO GENERAL
+# GUI
+# SHORT REPORT - META 1
+
+
 
 def categorize_data(data):
     labels = data['WindGustDir'].astype('category').cat.categories.tolist()
