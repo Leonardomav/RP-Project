@@ -23,6 +23,15 @@ def categorize_data(data):
 
     return data
 
+def normalize_data(data):
+    # normaliza data
+    data_normalized = data.loc[:, ~data.columns.isin(['Date', 'Location'])]
+    x = data_normalized.values
+    scaler = sklearn.preprocessing.StandardScaler()
+    x_scaled = scaler.fit_transform(x)
+    data_normalized = pandas.DataFrame(x_scaled, columns=data_normalized.columns)
+    return data_normalized
+
 def main():
     # Load data set
     filename = 'weatherAUS.csv'
@@ -34,29 +43,14 @@ def main():
     # Remove examples that have any missing values
     data = data.dropna(0, how='any')
 
-    #change Yes and No to 1 and 0
-    data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
-    data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
-
-    data = categorize_data(data)
-    data_date_loc = data[['Date', 'Location']]
-
-    #normaliza data
-    data_normalize=data.loc[:, ~data.columns.isin(['Date', 'Location'])]
-
-    x = data_normalize.values
-    scaler=sklearn.preprocessing.StandardScaler()
-    x_scaled=scaler.fit_transform(x)
-    data_normalize = pandas.DataFrame(x_scaled, columns = data_normalize.columns)
-
     # Print general info about the data
-    #data_info.print_general_information(data)
+    # data_info.print_general_information(data)
 
     # Describe a Single Columns
     # data_info.describe_column(data)
 
     # Print correlation between all features or between two if specified
-    #data_info.correlation_info(data, 'pearson')
+    # data_info.correlation_info(data, 'pearson')
 
     # Print data skew
     # print(data.skew())
@@ -65,9 +59,19 @@ def main():
     # data.hist()
     # pyplot.show()
 
+    # Kruskal_wallis
 
-    #Kruskal_wallis
-    features_selection.kruskal_wallis(data_normalize)
+    #change Yes and No to 1 and 0
+
+    data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
+    data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
+
+    data = categorize_data(data)
+    data_date_loc = data[['Date', 'Location']]
+
+    data_normalized=normalize_data(data)
+
+    KKW_rank=features_selection.kruskal_wallis(data_normalized )
 
 
 if __name__ == '__main__':

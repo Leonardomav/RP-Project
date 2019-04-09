@@ -10,4 +10,4 @@ def kruskal_wallis(data):
 
 
     rank = sorted(rank, key=lambda x: x[1], reverse=True )
-    print(rank)
+    return rank
