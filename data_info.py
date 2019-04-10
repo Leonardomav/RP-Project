@@ -1,6 +1,5 @@
 from pandas import set_option, option_context
 
-
 def print_general_information(data):
     types = data.dtypes
     class_counts = data.groupby('RainTomorrow').size()
