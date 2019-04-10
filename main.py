@@ -1,4 +1,5 @@
 import matplotlib
+
 matplotlib.use('TkAgg')
 import numpy
 import pandas
@@ -7,6 +8,7 @@ import scipy
 
 import data_info
 import features_selection
+import dim_reduction
 
 
 # [NOTE] Go back and forward to the Pre-processing, Feature reduction and Feature Selection phases until you are
@@ -14,21 +16,19 @@ import features_selection
 # this process. Try to show these trends in your final report, to be able to fundament all the issues involved (
 # choosing parameters, model fit, etc.)
 
-#TODO
+# TODO
 # "Define the appropriate performance metrics and justify your choices!"
 
-#TODO
+# TODO
 # See how Feature Selection and Dimension Reduction affect performance
 
-#TODO FS
+# TODO FS
 # Kolmogorov-Sirnov
 # ROC
 
-#TODO DR
-# PCA - META 1
-# LDA - META 1
+# TODO DR
 
-#TODO CLASS
+# TODO CLASS
 # Euclidean minimum distance classifier [LINEAR] - META 1
 # FISHER Linear Discriminant [LINEAR] - META 1
 # Mahalanobis minimum distance classifier [LINEAR]
@@ -36,10 +36,11 @@ import features_selection
 # Bayes Classifier (?)
 
 
-#TODO GENERAL
+# TODO GENERAL
 # GUI
 # SHORT REPORT - META 1
-
+# Specificity e Sensibility
+# box-plot to compare classifiers
 
 
 def categorize_data(data):
@@ -57,6 +58,7 @@ def categorize_data(data):
 
     return data
 
+
 def normalize_data(data):
     # normaliza data
     data_normalized = data.loc[:, ~data.columns.isin(['Date', 'Location'])]
@@ -64,7 +66,8 @@ def normalize_data(data):
     scaler = sklearn.preprocessing.StandardScaler()
     x_scaled = scaler.fit_transform(x)
     data_normalized = pandas.DataFrame(x_scaled, columns=data_normalized.columns)
-    return data_normalized
+    return data_normalized, x_scaled
+
 
 def main():
     # Load data set
@@ -72,10 +75,10 @@ def main():
     data_raw = pandas.read_csv(filename)
 
     # Remove features that have more than 20% of missing values
-    data = data_raw.dropna(1, thresh=len(data_raw.index) * 0.8)
+    data_less_raw = data_raw.dropna(1, thresh=len(data_raw.index) * 0.8)
 
     # Remove examples that have any missing values
-    data = data.dropna(0, how='any')
+    data_less_raw = data_less_raw.dropna(0, how='any')
 
     # Print general info about the data
     # data_info.print_general_information(data)
@@ -95,20 +98,33 @@ def main():
 
     # Kruskal_wallis
 
-    #change Yes and No to 1 and 0
+    # change Yes and No to 1 and 0
 
+    data = data_less_raw.copy()
     data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
     data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
 
     data = categorize_data(data)
     data_date_loc = data[['Date', 'Location']]
 
-    data_normalized=normalize_data(data)
+    data_y = data[['RainTomorrow']]
 
-    KKW_rank=features_selection.kruskal_wallis(data_normalized )
+    data_normalized, x_scaled = normalize_data(data)
+    data_y_norm = data_normalized[['RainTomorrow']]
+    data_normalized = data_normalized.drop(['RainTomorrow'], axis=1)
+
+    KKW_rank = features_selection.kruskal_wallis(data_normalized, data_y)
+
+    keep_index = []
+    n_features = 6
+    for i in range(n_features):
+        keep_index.append(KKW_rank[i][0])
+
+    data_kkw = data_normalized.iloc[:, keep_index]
+
+    dim_reduction.PCA(data_y, data_kkw)
+    # dim_reduction.LDA(data_y, data_kkw)
 
 
 if __name__ == '__main__':
     main()
-
-
