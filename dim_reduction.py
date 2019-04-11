@@ -4,11 +4,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def PCA(data_y, data):
+def PCA(data_y, data, n_comp):
     x = data.loc[:, ~data.columns.isin(['Date', 'Location', 'RainTomorrow'])].values
     x_scaled = sklearn.preprocessing.StandardScaler().fit_transform(x)
 
-    n_comp=2
     pca = sklearn.decomposition.PCA(n_components=n_comp)
     principal_components = pca.fit(x_scaled).transform(x_scaled)
 
@@ -26,23 +25,25 @@ def PCA(data_y, data):
     plt.title('PCA of WAUS dataset')
     plt.show()
 
+    return get_data_PCA(principal_components, data_y, n_comp)
+
 def get_data_PCA(principal_components, data_y, n_comp):
-
+    n_col=[]
     for i in range(n_comp):
+        n_col.append('Feature '+str(i))
 
 
-    data_PCA = pd.DataFrame(data=principal_components, columns=['principal component 1', 'principal component 2'])
-    data_PCA = pd.concat([data_PCA, data_y[['RainTomorrow']]], axis=1)
+    data_PCA = pd.DataFrame(data=principal_components, columns=n_col)
 
     return data_PCA
 
 
 
-def variance_feature_PCA(data):
+def variance_feature_PCA(data, c_comp):
     x = data.loc[:, ~data.columns.isin(['Date', 'Location', 'RainTomorrow'])].values
     x_scaled = sklearn.preprocessing.StandardScaler().fit_transform(x)
 
-    pca = sklearn.decomposition.PCA(n_components=4)
+    pca = sklearn.decomposition.PCA(n_components=c_comp)
     pca.fit(x_scaled)
 
     plt.figure(1, figsize=(9, 8))
