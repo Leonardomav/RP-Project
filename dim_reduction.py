@@ -18,12 +18,26 @@ def PCA(data_y, data):
     lw = 2
 
     for color, i, target_name in zip(colors, [0, 1], target_names):
-        print(principal_components[data_y == i, 0])
         plt.scatter(principal_components[data_y == i, 0], principal_components[data_y == i, 1], color=color, alpha=.8,
                     lw=lw, label=target_name, s=0.25)
     plt.legend(loc='best', shadow=False, scatterpoints=1)
     plt.title('PCA of WAUS dataset')
     plt.show()
+
+def variance_feature_PCA(data):
+    x = data.loc[:, ~data.columns.isin(['Date', 'Location', 'RainTomorrow'])].values
+    x_scaled = sklearn.preprocessing.StandardScaler().fit_transform(x)
+
+    pca = sklearn.decomposition.PCA()
+    pca.fit(x_scaled)
+
+    plt.figure(1, figsize=(9, 8))
+    plt.clf()
+    plt.axes([.2, .2, .7, .7])
+    plt.plot(pca.explained_variance_ratio_, linewidth=2)
+    plt.axis('tight')
+    plt.xlabel('Number of Feautres')
+    plt.ylabel('Variance Ratio')
 
 
 def LDA(data_y, data):
