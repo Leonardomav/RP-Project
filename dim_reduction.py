@@ -27,7 +27,7 @@ def PCA(data_y, data, n_comp):
 
     return get_data_PCA(principal_components, data_y, n_comp)
 
-def get_data_PCA(principal_components, data_y, n_comp):
+def get_data_PCA(principal_components, n_comp):
     n_col=[]
     for i in range(n_comp):
         n_col.append('Feature '+str(i))

@@ -1,6 +1,8 @@
 import matplotlib
 
 matplotlib.use('TkAgg')
+
+import matplotlib.pyplot as plt
 import numpy
 import pandas
 import sklearn.preprocessing
@@ -20,31 +22,9 @@ import dim_reduction
 # TODO
 # "Define the appropriate performance metrics and justify your choices!"
 
-# TODO
-# See how Feature Selection and Dimension Reduction affect performance
-
-# TODO FS
-# KKW - DONE
-# Kolmogorov-Sirnov
-# ROC
-# Select K-best
-
-# TODO DR
-# LDA - DONE
-# PCA - DONE
-
-# TODO CLASS
-# Euclidean minimum distance classifier [LINEAR] - META 1
-# FISHER Linear Discriminant [LINEAR] - META 1
-# Mahalanobis minimum distance classifier [LINEAR]
-# K-Nearest Neighbour (?)
-# Bayes Classifier (?)
-
-
 # TODO GENERAL
 # GUI
 # SHORT REPORT - META 1
-# Specificity e Sensibility
 # box-plot to compare classifiers
 
 
