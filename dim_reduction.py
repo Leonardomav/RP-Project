@@ -27,8 +27,10 @@ def PCA(data_y, data):
     plt.show()
 
 def get_data_PCA(principal_components, data_y, n_comp):
-    col = 
-    for i in range
+
+    for i in range(n_comp):
+
+
     data_PCA = pd.DataFrame(data=principal_components, columns=['principal component 1', 'principal component 2'])
     data_PCA = pd.concat([data_PCA, data_y[['RainTomorrow']]], axis=1)
 

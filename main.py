@@ -23,10 +23,14 @@ import dim_reduction
 # See how Feature Selection and Dimension Reduction affect performance
 
 # TODO FS
+# KKW - DONE
 # Kolmogorov-Sirnov
 # ROC
+# Select K-best
 
 # TODO DR
+# LDA - DONE
+# PCA - DONE
 
 # TODO CLASS
 # Euclidean minimum distance classifier [LINEAR] - META 1
@@ -123,18 +127,17 @@ def main():
     data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
 
     data = categorize_data(data)
-
     data_date_loc = data[['Date', 'Location']]
 
     data_y = data[['RainTomorrow']]
-
     data_normalized, data_y_norm, x_scaled = normalize_data(data)
 
     KKW_rank = features_selection.kruskal_wallis(data_normalized, data_y)
-    data_kkw = get_data_kkw(6, data_normalized, KKW_rank)
+    data_kkw = get_data_kkw(5, data_normalized, KKW_rank)
 
     dim_reduction.variance_feature_PCA(data_kkw)
-    dim_reduction.PCA(data_y, data_kkw)
+
+    data_PCA = dim_reduction.PCA(data_y, data_kkw)
     # dim_reduction.LDA(data_y, data_kkw)
 
 
