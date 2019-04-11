@@ -109,7 +109,10 @@ def main():
 
     # change Yes and No to 1 and 0
 
+    print(data_less_raw.shape)
     data = data_less_raw.copy()
+    print(data.shape)
+    print(data_less_raw.shape)
     data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
     data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
 
@@ -128,7 +131,7 @@ def main():
 
     # dim_reduction.LDA(data_y, data_kkw)
 
-    data_split(data_PCA, data_y)
+    X_train, X_test, y_train, y_test= data_split(data_PCA, data_y)
 
 
 if __name__ == '__main__':
