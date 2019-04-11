@@ -3,6 +3,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 import matplotlib
 matplotlib.use("TKagg")
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def PCA(data_y, data, n_components):
@@ -11,7 +12,7 @@ def PCA(data_y, data, n_components):
     pca = sklearn.decomposition.PCA(n_components=n_components)
     principal_components = pca.fit(x_scaled).transform(x_scaled)
 
-    data_y = data_y.iloc[:, 0].as_matrix()
+    data_y = data_y.iloc[:, 0].as_matrix() #list do darray
 
     plt.figure()
     target_names = [0, 1]
@@ -26,6 +27,32 @@ def PCA(data_y, data, n_components):
                         lw=lw, label=target_name, s=0.25)
     plt.legend(loc='best', shadow=False, scatterpoints=1)
     plt.title('PCA of WAUS dataset')
+    plt.show()
+
+def get_data_PCA(principal_components, data_y, n_comp):
+
+    data_PCA = pd.DataFrame(data=principal_components, columns=['principal component 1', 'principal component 2'])
+    for i in range(n_comp):
+        data_PCA = pd.concat([data_PCA, data_y[['RainTomorrow']]], axis=1)
+
+    return data_PCA
+
+
+
+def variance_feature_PCA(data):
+    x = data.loc[:, ~data.columns.isin(['Date', 'Location', 'RainTomorrow'])].values
+    x_scaled = sklearn.preprocessing.StandardScaler().fit_transform(x)
+
+    pca = sklearn.decomposition.PCA(n_components=4)
+    pca.fit(x_scaled)
+
+    plt.figure(1, figsize=(9, 8))
+    plt.clf()
+    plt.axes([.2, .2, .7, .7])
+    plt.plot(pca.explained_variance_ratio_, linewidth=2)
+    plt.axis('tight')
+    plt.xlabel('Number of Feautres')
+    plt.ylabel('Variance Ratio')
     plt.show()
 
 
@@ -48,3 +75,4 @@ def LDA(data_y, data):
     plt.legend(loc='best', shadow=False, scatterpoints=1)
     plt.title('LDA of WAUS dataset')
     plt.show()
+

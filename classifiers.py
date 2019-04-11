@@ -1,5 +1,5 @@
-def Euclidian_MDA():
+def Euclidian_MDC():
     pass
 
-def Mahalanobis_MDA():
+def Mahalanobis_MDC():
     pass

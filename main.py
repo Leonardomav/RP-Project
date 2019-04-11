@@ -50,7 +50,22 @@ def normalize_data(data):
     scaler = sklearn.preprocessing.StandardScaler()
     x_scaled = scaler.fit_transform(x)
     data_normalized = pandas.DataFrame(x_scaled, columns=data_normalized.columns)
-    return data_normalized, x_scaled
+
+    data_y_norm = data_normalized[['RainTomorrow']]
+
+    data_normalized = data_normalized.drop(['RainTomorrow'], axis=1)
+
+    return data_normalized, data_y_norm, x_scaled
+
+
+def get_data_kkw(n_features, data, KKW_rank):
+    keep_index = []
+    for i in range(n_features):
+        keep_index.append(KKW_rank[i][0])
+
+    data_kkw = data.iloc[:, keep_index]
+
+    return data_kkw
 
 
 def main():
@@ -63,6 +78,9 @@ def main():
 
     # Remove examples that have any missing values
     data_less_raw = data_less_raw.dropna(0, how='any')
+
+    # Remove RISK_MM
+    data_less_raw = data_less_raw.drop(['RISK_MM'], axis=1)
 
     # Print general info about the data
     # data_info.print_general_information(data)
@@ -92,21 +110,14 @@ def main():
     data_date_loc = data[['Date', 'Location']]
 
     data_y = data[['RainTomorrow']]
+    data_normalized, data_y_norm, x_scaled = normalize_data(data)
 
-    data_normalized, x_scaled = normalize_data(data)
-    data_y_norm = data_normalized[['RainTomorrow']]
-    data_normalized = data_normalized.drop(['RainTomorrow'], axis=1)
+    KKW_rank = features_selection.kruskal_wallis(data_normalized, data_y)
+    data_kkw = get_data_kkw(5, data_normalized, KKW_rank)
 
-    KKW_rank = features_selection.kruskal_wallis(data, data_y)
+    dim_reduction.variance_feature_PCA(data_kkw)
 
-    keep_index = []
-    n_features = 6
-    for i in range(n_features):
-        keep_index.append(KKW_rank[i][0])
-
-    #data_kkw = data_normalized.iloc[:, keep_index]
-
-    dim_reduction.PCA(data_y, data_normalized, 5)
+    data_PCA = dim_reduction.PCA(data_y, data_kkw)
     # dim_reduction.LDA(data_y, data_kkw)
 
 
