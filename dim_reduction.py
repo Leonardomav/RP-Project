@@ -1,15 +1,14 @@
 import sklearn.decomposition
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-import matplotlib
-matplotlib.use("TKagg")
 import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def PCA(data_y, data, n_components):
+def PCA(data_y, data, n_comp):
     x = data.loc[:, ~data.columns.isin(['Date', 'Location', 'RainTomorrow'])].values
     x_scaled = sklearn.preprocessing.StandardScaler().fit_transform(x)
-    pca = sklearn.decomposition.PCA(n_components=n_components)
+
+    pca = sklearn.decomposition.PCA(n_components=n_comp)
     principal_components = pca.fit(x_scaled).transform(x_scaled)
 
     data_y = data_y.iloc[:, 0].as_matrix() #list do darray
@@ -19,31 +18,32 @@ def PCA(data_y, data, n_components):
     colors = ['r', 'b']
     lw = 2
 
-    f, axarr = plt.subplots(n_components, n_components)
-    for pca1 in range(n_components):
-        for pca2 in range(n_components):
-            for color, i, target_name in zip(colors, [0, 1], target_names):
-                axarr[pca1, pca2].scatter(principal_components[data_y == i, pca1], principal_components[data_y == i, pca2], color=color, alpha=.8,
-                        lw=lw, label=target_name, s=0.25)
+    for color, i, target_name in zip(colors, [0, 1], target_names):
+        plt.scatter(principal_components[data_y == i, 0], principal_components[data_y == i, 1], color=color, alpha=.8,
+                    lw=lw, label=target_name, s=0.25)
     plt.legend(loc='best', shadow=False, scatterpoints=1)
     plt.title('PCA of WAUS dataset')
     plt.show()
 
-def get_data_PCA(principal_components, data_y, n_comp):
+    return get_data_PCA(principal_components, data_y, n_comp)
 
-    data_PCA = pd.DataFrame(data=principal_components, columns=['principal component 1', 'principal component 2'])
+def get_data_PCA(principal_components, n_comp):
+    n_col=[]
     for i in range(n_comp):
-        data_PCA = pd.concat([data_PCA, data_y[['RainTomorrow']]], axis=1)
+        n_col.append('Feature '+str(i))
+
+
+    data_PCA = pd.DataFrame(data=principal_components, columns=n_col)
 
     return data_PCA
 
 
 
-def variance_feature_PCA(data):
+def variance_feature_PCA(data, c_comp):
     x = data.loc[:, ~data.columns.isin(['Date', 'Location', 'RainTomorrow'])].values
     x_scaled = sklearn.preprocessing.StandardScaler().fit_transform(x)
 
-    pca = sklearn.decomposition.PCA(n_components=4)
+    pca = sklearn.decomposition.PCA(n_components=c_comp)
     pca.fit(x_scaled)
 
     plt.figure(1, figsize=(9, 8))

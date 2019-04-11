@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy
 import pandas
 import sklearn.preprocessing
+import sklearn.model_selection
 import scipy
 
 import data_info
@@ -45,7 +46,7 @@ def categorize_data(data):
 
 def normalize_data(data):
     # normaliza data
-    data_normalized = data.loc[:, ~data.columns.isin(['Date', 'Location'])]
+    data_normalized = data.drop(['Date', 'Location'], axis=1)
     x = data_normalized.values
     scaler = sklearn.preprocessing.StandardScaler()
     x_scaled = scaler.fit_transform(x)
@@ -66,6 +67,12 @@ def get_data_kkw(n_features, data, KKW_rank):
     data_kkw = data.iloc[:, keep_index]
 
     return data_kkw
+
+
+def data_split(data, data_y):
+    X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(data, data_y, test_size=0.25,
+                                                                                random_state=42, shuffle=False)
+    return X_train, X_test, y_train, y_test
 
 
 def main():
@@ -113,12 +120,15 @@ def main():
     data_normalized, data_y_norm, x_scaled = normalize_data(data)
 
     KKW_rank = features_selection.kruskal_wallis(data_normalized, data_y)
-    data_kkw = get_data_kkw(5, data_normalized, KKW_rank)
+    data_kkw = get_data_kkw(16, data_normalized, KKW_rank)
 
-    dim_reduction.variance_feature_PCA(data_kkw)
+    n_comp = 8
+    dim_reduction.variance_feature_PCA(data_kkw, n_comp)
+    data_PCA = dim_reduction.PCA(data_y, data_kkw, n_comp)
 
-    data_PCA = dim_reduction.PCA(data_y, data_kkw)
     # dim_reduction.LDA(data_y, data_kkw)
+
+    data_split(data_PCA, data_y)
 
 
 if __name__ == '__main__':
