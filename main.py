@@ -1,6 +1,8 @@
 import matplotlib
 
 matplotlib.use('TkAgg')
+
+import matplotlib.pyplot as plt
 import numpy
 import pandas
 import sklearn.preprocessing
@@ -19,27 +21,9 @@ import dim_reduction
 # TODO
 # "Define the appropriate performance metrics and justify your choices!"
 
-# TODO
-# See how Feature Selection and Dimension Reduction affect performance
-
-# TODO FS
-# Kolmogorov-Sirnov
-# ROC
-
-# TODO DR
-
-# TODO CLASS
-# Euclidean minimum distance classifier [LINEAR] - META 1
-# FISHER Linear Discriminant [LINEAR] - META 1
-# Mahalanobis minimum distance classifier [LINEAR]
-# K-Nearest Neighbour (?)
-# Bayes Classifier (?)
-
-
 # TODO GENERAL
 # GUI
 # SHORT REPORT - META 1
-# Specificity e Sensibility
 # box-plot to compare classifiers
 
 
@@ -113,16 +97,16 @@ def main():
     data_y_norm = data_normalized[['RainTomorrow']]
     data_normalized = data_normalized.drop(['RainTomorrow'], axis=1)
 
-    KKW_rank = features_selection.kruskal_wallis(data_normalized, data_y)
+    KKW_rank = features_selection.kruskal_wallis(data, data_y)
 
     keep_index = []
     n_features = 6
     for i in range(n_features):
         keep_index.append(KKW_rank[i][0])
 
-    data_kkw = data_normalized.iloc[:, keep_index]
+    #data_kkw = data_normalized.iloc[:, keep_index]
 
-    dim_reduction.PCA(data_y, data_kkw)
+    dim_reduction.PCA(data_y, data_normalized, 5)
     # dim_reduction.LDA(data_y, data_kkw)
 
 

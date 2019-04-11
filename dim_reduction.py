@@ -1,13 +1,14 @@
 import sklearn.decomposition
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+import matplotlib
+matplotlib.use("TKagg")
 import matplotlib.pyplot as plt
 
 
-def PCA(data_y, data):
+def PCA(data_y, data, n_components):
     x = data.loc[:, ~data.columns.isin(['Date', 'Location', 'RainTomorrow'])].values
     x_scaled = sklearn.preprocessing.StandardScaler().fit_transform(x)
-
-    pca = sklearn.decomposition.PCA(n_components=2)
+    pca = sklearn.decomposition.PCA(n_components=n_components)
     principal_components = pca.fit(x_scaled).transform(x_scaled)
 
     data_y = data_y.iloc[:, 0].as_matrix()
@@ -17,10 +18,12 @@ def PCA(data_y, data):
     colors = ['r', 'b']
     lw = 2
 
-    for color, i, target_name in zip(colors, [0, 1], target_names):
-        print(principal_components[data_y == i, 0])
-        plt.scatter(principal_components[data_y == i, 0], principal_components[data_y == i, 1], color=color, alpha=.8,
-                    lw=lw, label=target_name, s=0.25)
+    f, axarr = plt.subplots(n_components, n_components)
+    for pca1 in range(n_components):
+        for pca2 in range(n_components):
+            for color, i, target_name in zip(colors, [0, 1], target_names):
+                axarr[pca1, pca2].scatter(principal_components[data_y == i, pca1], principal_components[data_y == i, pca2], color=color, alpha=.8,
+                        lw=lw, label=target_name, s=0.25)
     plt.legend(loc='best', shadow=False, scatterpoints=1)
     plt.title('PCA of WAUS dataset')
     plt.show()
