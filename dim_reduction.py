@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def PCA(data_y, data, n_comp):
+def PCA(data_y, data, n_comp, silent=True):
     x = data.loc[:, ~data.columns.isin(['Date', 'Location', 'RainTomorrow'])].values
     x_scaled = sklearn.preprocessing.StandardScaler().fit_transform(x)
 
@@ -13,17 +13,18 @@ def PCA(data_y, data, n_comp):
 
     data_y = data_y.iloc[:, 0].as_matrix() #list do darray
 
-    plt.figure()
-    target_names = [0, 1]
-    colors = ['r', 'b']
-    lw = 2
+    if not silent:
+        plt.figure()
+        target_names = [0, 1]
+        colors = ['r', 'b']
+        lw = 2
 
-    for color, i, target_name in zip(colors, [0, 1], target_names):
-        plt.scatter(principal_components[data_y == i, 0], principal_components[data_y == i, 1], color=color, alpha=.8,
-                    lw=lw, label=target_name, s=0.25)
-    plt.legend(loc='best', shadow=False, scatterpoints=1)
-    plt.title('PCA of WAUS dataset')
-    plt.show()
+        for color, i, target_name in zip(colors, [0, 1], target_names):
+            plt.scatter(principal_components[data_y == i, 0], principal_components[data_y == i, 1], color=color, alpha=.8,
+                        lw=lw, label=target_name, s=0.25)
+        plt.legend(loc='best', shadow=False, scatterpoints=1)
+        plt.title('PCA of WAUS dataset')
+        plt.show()
 
     return get_data_PCA(principal_components, n_comp)
 
