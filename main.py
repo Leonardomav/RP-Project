@@ -118,16 +118,16 @@ def main():
     data_normalized, data_y_norm, x_scaled = normalize_data(data)
 
     KKW_rank = features_selection.kruskal_wallis(data_normalized, data_y)
-    data_kkw = get_data_kkw(16, data_normalized, KKW_rank)
+    data_kkw = get_data_kkw(2, data_normalized, KKW_rank)
 
-    n_comp = 8
+    n_comp = 2
     #dim_reduction.variance_feature_PCA(data_kkw, n_comp)
     data_PCA = dim_reduction.PCA(data_y, data_kkw, n_comp)
 
     # dim_reduction.LDA(data_y, data_kkw)
 
     X_train, X_test, y_train, y_test= data_split(data_kkw, data_y)
-    classifiers.Euclidian_MDC(X_train, X_test, y_train, y_test)
+    #classifiers.Euclidian_MDC(X_train, X_test, y_train, y_test)
     classifiers.Mahalanobis_MDC(X_train, X_test, y_train, y_test)
 
 if __name__ == '__main__':
