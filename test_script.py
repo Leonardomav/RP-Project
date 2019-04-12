@@ -1,22 +1,10 @@
-from test_pipeline import test_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.feature_selection import RFE, SelectKBest, chi2
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.svm import SVC
-from sklearn.metrics import confusion_matrix
-from sklearn.model_selection import (KFold, LeaveOneOut, ShuffleSplit,
-                                     cross_val_score, train_test_split)
-from sklearn.pipeline import Pipeline
 import matplotlib
 matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
-import numpy
+from test_pipeline import test_pipeline
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.pipeline import Pipeline
 import pandas
+
 def categorize_data(data):
     labels = data['WindGustDir'].astype('category').cat.categories.tolist()
     col = ['WindGustDir', 'WindDir9am', 'WindDir3pm']
