@@ -52,5 +52,6 @@ data = get_preprocessed_data()
 test_pipeline(
     data,
     Pipeline([
-        ('lda', LinearDiscriminantAnalysis())]),
+        ('lda', LinearDiscriminantAnalysis()),
+        ]),
     0)
