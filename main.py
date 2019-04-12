@@ -1,5 +1,4 @@
 import matplotlib
-
 matplotlib.use('TkAgg')
 
 import pandas
@@ -129,7 +128,8 @@ def main():
 
     X_train, X_test, y_train, y_test= data_split(data_kkw, data_y)
     classifiers.Euclidian_MDC(X_train, X_test, y_train, y_test)
-
+    classifiers.Mahalanobis_MDC(X_train, X_test, y_train, y_test)
 
 if __name__ == '__main__':
     main()
+
