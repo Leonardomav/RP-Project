@@ -2,15 +2,6 @@ import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.feature_selection import RFE, SelectKBest, chi2
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.model_selection import (KFold, LeaveOneOut, ShuffleSplit,
                                      cross_val_predict, train_test_split)
