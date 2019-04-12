@@ -2,12 +2,9 @@ import matplotlib
 
 matplotlib.use('TkAgg')
 
-import matplotlib.pyplot as plt
-import numpy
 import pandas
 import sklearn.preprocessing
 import sklearn.model_selection
-import scipy
 
 import data_info
 import features_selection
