@@ -11,10 +11,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 from sklearn.model_selection import (KFold, LeaveOneOut, ShuffleSplit,
                                      cross_val_predict, train_test_split)
-
+import datetime
+import csv
 def plot_confusion_matrix(y_true, y_pred, classes,
                           normalize=False,
                           title=None,
@@ -67,14 +68,33 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     fig.tight_layout()
     return ax
 
-def test_pipeline(data, pipeline, seed):
-    kfold = KFold(n_splits=10, random_state=0)
+def test_pipeline(data, pipeline, seed, prediction_function, visual=False):
+    test_name = str(datetime.datetime.now()) + ":"
+    for procedure in pipeline.named_steps:
+        test_name += procedure + ','
+    test_name = test_name[:-1] + str(seed)
+    predictions = prediction_function(data['x'], data['y'], pipeline)
+    
+    kfold = KFold(n_splits=10, random_state=seed)
     predictions = cross_val_predict(pipeline, data['x'], data['y'], cv=kfold)
     conf_matrix = confusion_matrix(data['y'], predictions)
-    print(classification_report(data['y'], predictions))
-    plot_confusion_matrix(data['y'], predictions, [0, 1],
-                          normalize=False,
-                          title=None,
-                          cmap=plt.cm.Blues)
-    plt.show()
-    pass
+    class_report = classification_report(data['y'], predictions, output_dict=True)
+    if visual:
+        plot_confusion_matrix(data['y'], predictions, [0, 1],
+                            normalize=False,
+                            title=None,
+                            cmap=plt.cm.Blues)
+        plt.show()
+    with open('results.csv', 'a') as result_csv:
+        writer = csv.writer(result_csv)
+        writer.writerow(
+            [test_name, 
+            class_report['0']['f1-score'],
+            class_report['0']['precision'],
+            class_report['0']['recall'],
+            class_report['1']['f1-score'],
+            class_report['1']['precision'],
+            class_report['1']['recall'],
+            accuracy_score(data['y'], predictions),
+            ])
+    print('Done')
