@@ -120,19 +120,23 @@ def main():
 
     n_comp = 5
 
+    # FEATURE_SELECTION
+
     KKW_rank = features_selection.kruskal_wallis(data_normalized, data_y)
-    data_kkw = get_data_kkw(2, data_normalized, KKW_rank)
+    data_kkw = get_data_kkw(15, data_normalized, KKW_rank)
 
     # data_k_best=features_selection.select_k_best(data_normalized, data_y, n_comp) # NOT WORKING ATM
+
+    # DIM_REDUCTION
 
     # dim_reduction.variance_feature_PCA(data_kkw, n_comp)
     # data_PCA = dim_reduction.PCA(data_y, data_kkw, n_comp)
 
-    # dim_reduction.LDA(data_y, data_kkw)
+    # dim_reduction.LDA(data_y, data_kkw) # doesnt make a lot of sense in this case tbh
 
     X_train, X_test, y_train, y_test = data_split(data_kkw, data_y)
     classifiers.Euclidean_MDC(X_train, X_test, y_train, y_test)
-    # classifiers.Mahalanobis_MDC(X_train, X_test, y_train, y_test)
+    classifiers.Mahalanobis_MDC(X_train, X_test, y_train, y_test)
 
 
 if __name__ == '__main__':
