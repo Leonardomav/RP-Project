@@ -45,9 +45,6 @@ def get_preprocessed_data():
 
     data = categorize_data(data)
 
-
-    data_date_loc = data[['Date', 'Location']]
-
     data_y = data['RainTomorrow'].ravel()
     data = data.drop(['Date', 'Location'], axis=1)
 
