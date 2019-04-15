@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import (accuracy_score, classification_report,
                              confusion_matrix)
-from sklearn.model_selection import KFold, cross_val_predict
 
 
 
@@ -63,16 +62,14 @@ def plot_confusion_matrix(y_true, y_pred, classes, normalize=False, title=None, 
 def test_pipeline(data, pipeline, seed, prediction_function, visual=False):
     test_name = str(datetime.datetime.now()) + ":"
     for procedure in pipeline.named_steps:
-        test_name += procedure + ','
-    test_name = test_name[:-1] + str(seed)
-    predictions = prediction_function(data['x'], data['y'], pipeline)
-    
-    kfold = KFold(n_splits=10, random_state=seed)
-    predictions = cross_val_predict(pipeline, data['x'], data['y'], cv=kfold)
-    conf_matrix = confusion_matrix(data['y'], predictions)
-    class_report = classification_report(data['y'], predictions, output_dict=True)
+        test_name += procedure + ';'
+    test_name = test_name[:-1] + "-" + str(seed)
+    tested_data, predictions, prediction_function_name = prediction_function(pipeline, data, 0)
+    test_name += "-" + prediction_function_name
+    conf_matrix = confusion_matrix(tested_data, predictions)
+    class_report = classification_report(tested_data, predictions, output_dict=True)
     if visual:
-        plot_confusion_matrix(data['y'], predictions, [0, 1],
+        plot_confusion_matrix(tested_data, predictions, [0, 1],
                             normalize=False,
                             title=None,
                             cmap=plt.cm.Blues)
@@ -87,6 +84,6 @@ def test_pipeline(data, pipeline, seed, prediction_function, visual=False):
             class_report['1']['f1-score'],
             class_report['1']['precision'],
             class_report['1']['recall'],
-            accuracy_score(data['y'], predictions),
+            accuracy_score(tested_data, predictions),
             ])
     print('Done')
