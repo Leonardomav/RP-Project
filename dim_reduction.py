@@ -28,6 +28,7 @@ def PCA(data_y, data, n_comp, silent=True):
 
     return get_data_PCA(principal_components, n_comp)
 
+
 def get_data_PCA(principal_components, n_comp):
     n_col=[]
     for i in range(n_comp):
@@ -37,7 +38,6 @@ def get_data_PCA(principal_components, n_comp):
     data_PCA = pd.DataFrame(data=principal_components, columns=n_col)
 
     return data_PCA
-
 
 
 def variance_feature_PCA(data, c_comp):
