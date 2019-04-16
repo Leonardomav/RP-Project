@@ -1,5 +1,6 @@
 import scipy
-import sklearn.feature_selection
+from sklearn.feature_selection import mutual_info_classif, SelectKBest
+import pandas as pd
 
 
 def kruskal_wallis(data, data_y):
@@ -14,6 +15,9 @@ def kruskal_wallis(data, data_y):
 
 
 def select_k_best(data, data_y, n_col=16):
-    new_data = sklearn.feature_selection.SelectKBest(sklearn.feature_selection.chi2, k=n_col).fit_transform(data,
-                                                                                                            data_y)
+    clf = SelectKBest(mutual_info_classif, k=n_col)
+    new_data = clf.fit_transform(data,data_y)
+    mask = clf.get_support()
+    cols = data.columns[mask]
+    new_data=pd.DataFrame(data=new_data, columns=cols)
     return new_data
