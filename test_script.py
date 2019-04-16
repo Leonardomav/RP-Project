@@ -1,4 +1,5 @@
 import matplotlib
+
 matplotlib.use('TkAgg')
 from scipy.stats import kstest
 from test_pipeline import test_pipeline
@@ -12,6 +13,7 @@ from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.decomposition import PCA
 import pandas
 from features_selection import kruskal_wallis
+
 
 def categorize_data(data):
     labels = data['WindGustDir'].astype('category').cat.categories.tolist()
@@ -27,6 +29,7 @@ def categorize_data(data):
     data['Location'].astype('category')
 
     return data
+
 
 def get_preprocessed_data():
     # Load data set
@@ -53,10 +56,12 @@ def get_preprocessed_data():
 
     return {'x': data, 'y': data_y}
 
+
 def kfold_cross_val_predictions(pipeline, data, seed):
     kfold = KFold(n_splits=10, random_state=seed)
     predictions = cross_val_predict(pipeline, data['x'], data['y'], cv=kfold)
     return data['y'], predictions, "kfold_cross_val_predictions"
+
 
 def train_test_predictions(pipeline, data, seed):
     X_train, X_test, y_train, y_test = train_test_split(data['x'], data['y'], test_size=0.25, random_state=seed)
@@ -70,17 +75,11 @@ data = get_preprocessed_data()
 logistic = SGDClassifier(loss='log', penalty='l2', early_stopping=True,
                          max_iter=10000, tol=1e-5, random_state=0)
 
-ass = SelectKBest(mutual_info_classif)
-ress = ass.fit_transform(data['x'], data['y'])
-
-ass2 = kruskal_wallis(data['x'], data['y'])
-ass3 =SelectKBest(chi2) 
-ress = ass3.fit_transform(data['x'], data['y'])
 test_pipeline(
     data,
     Pipeline([
         ('lda', LinearDiscriminantAnalysis()),
-        ]),
+    ]),
     0,
     kfold_cross_val_predictions)
 test_pipeline(
@@ -88,7 +87,7 @@ test_pipeline(
     Pipeline([
         ('pca', PCA()),
         ('lda', LinearDiscriminantAnalysis()),
-        ]),
+    ]),
     0,
     kfold_cross_val_predictions)
 test_pipeline(
@@ -96,7 +95,7 @@ test_pipeline(
     Pipeline([
         ('lda-dr', LinearDiscriminantAnalysis()),
         ('lda', LinearDiscriminantAnalysis()),
-        ]),
+    ]),
     0,
     kfold_cross_val_predictions)
 
@@ -104,7 +103,7 @@ test_pipeline(
     data,
     Pipeline([
         ('nearest_centroid', NearestCentroid()),
-        ]),
+    ]),
     0,
     kfold_cross_val_predictions)
 test_pipeline(
@@ -112,7 +111,7 @@ test_pipeline(
     Pipeline([
         ('pca', PCA()),
         ('nearest_centroid', NearestCentroid()),
-        ]),
+    ]),
     0,
     kfold_cross_val_predictions)
 test_pipeline(
@@ -120,14 +119,14 @@ test_pipeline(
     Pipeline([
         ('lda-dr', LinearDiscriminantAnalysis()),
         ('nearest_centroid', NearestCentroid()),
-        ]),
+    ]),
     0,
     kfold_cross_val_predictions)
 test_pipeline(
     data,
     Pipeline([
         ('lda', LinearDiscriminantAnalysis()),
-        ]),
+    ]),
     0,
     train_test_predictions)
 test_pipeline(
@@ -135,7 +134,7 @@ test_pipeline(
     Pipeline([
         ('pca', PCA()),
         ('lda', LinearDiscriminantAnalysis()),
-        ]),
+    ]),
     0,
     train_test_predictions)
 test_pipeline(
@@ -143,7 +142,7 @@ test_pipeline(
     Pipeline([
         ('lda-dr', LinearDiscriminantAnalysis()),
         ('lda', LinearDiscriminantAnalysis()),
-        ]),
+    ]),
     0,
     train_test_predictions)
 
@@ -151,7 +150,7 @@ test_pipeline(
     data,
     Pipeline([
         ('nearest_centroid', NearestCentroid()),
-        ]),
+    ]),
     0,
     train_test_predictions)
 test_pipeline(
@@ -159,7 +158,7 @@ test_pipeline(
     Pipeline([
         ('pca', PCA()),
         ('nearest_centroid', NearestCentroid()),
-        ]),
+    ]),
     0,
     train_test_predictions)
 test_pipeline(
@@ -167,7 +166,7 @@ test_pipeline(
     Pipeline([
         ('lda-dr', LinearDiscriminantAnalysis()),
         ('nearest_centroid', NearestCentroid()),
-        ]),
+    ]),
     0,
     train_test_predictions)
 
