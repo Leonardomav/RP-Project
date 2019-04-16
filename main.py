@@ -57,6 +57,7 @@ def normalize_data(data):
     return data_normalized, data_y_norm, x_scaled
 
 
+# DEPRECATED
 def get_data_kkw(n_features, data, KKW_rank):
     keep_index = []
     for i in range(n_features):
@@ -122,19 +123,22 @@ def main():
 
     # FEATURE_SELECTION
 
-    # KKW_rank = features_selection.kruskal_wallis(data_normalized, data_y)
-    # data_kkw = get_data_kkw(6, data_normalized, KKW_rank)
+    n_features = 6
+    # new_data = features_selection.kruskal_wallis(data_normalized, data_y, n_features)
 
-    data_k_best = features_selection.select_k_best(data_normalized, data_y, 6)  # NOT WORKING ATM
+    # new_data = features_selection.select_k_best(data_normalized, data_y, n_features)
+
+    new_data = features_selection.ROC(data_normalized, data_y, n_features)
 
     # DIM_REDUCTION
 
-    # dim_reduction.variance_feature_PCA(data_kkw, n_comp)
-    # data_PCA = dim_reduction.PCA(data_y, data_kkw, n_comp)
+    # dim_reduction.variance_feature_PCA(new_data, n_comp)
 
-    # dim_reduction.LDA(data_y, data_kkw) # doesnt make a lot of sense in this case tbh
+    # data_PCA = dim_reduction.PCA(data_y, new_data, n_comp)
 
-    X_train, X_test, y_train, y_test = data_split(data_k_best, data_y)
+    # dim_reduction.LDA(data_y, new_data) # doesnt make a lot of sense in this case tbh
+
+    X_train, X_test, y_train, y_test = data_split(new_data, data_y)
     # classifiers.Euclidean_MDC(X_train, X_test, y_train, y_test)
     # classifiers.Mahalanobis_MDC(X_train, X_test, y_train, y_test)
 
