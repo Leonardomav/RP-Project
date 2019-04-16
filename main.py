@@ -8,6 +8,7 @@ import sklearn.model_selection
 
 import data_info
 import features_selection
+import feature_selection_pipeline
 import dim_reduction
 import classifiers
 
@@ -126,9 +127,9 @@ def main():
     n_features = 6
     # new_data = features_selection.kruskal_wallis(data_normalized, data_y, n_features)
 
-    # new_data = features_selection.select_k_best(data_normalized, data_y, n_features)
-
-    new_data = features_selection.ROC(data_normalized, data_y, n_features)
+    new_data = features_selection.select_k_best(data_normalized, data_y, n_features)
+    ki=feature_selection_pipeline.select_k_best(data_normalized, data_y, n_features)
+    # new_data = features_selection.ROC(data_normalized, data_y, n_features)
 
     # DIM_REDUCTION
 
