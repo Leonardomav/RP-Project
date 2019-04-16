@@ -1,14 +1,17 @@
 import matplotlib
 matplotlib.use('TkAgg')
+from scipy.stats import kstest
 from test_pipeline import test_pipeline
 from sklearn.linear_model import SGDClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold, cross_val_predict
+from sklearn.feature_selection import SelectKBest, mutual_info_classif, chi2
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.decomposition import PCA
 import pandas
+from features_selection import kruskal_wallis
 
 def categorize_data(data):
     labels = data['WindGustDir'].astype('category').cat.categories.tolist()
@@ -61,12 +64,18 @@ def train_test_predictions(pipeline, data, seed):
     predictions = pipeline.predict(X_test)
     return y_test, predictions, "train_test_predictions"
 
+
 data = get_preprocessed_data()
 
 logistic = SGDClassifier(loss='log', penalty='l2', early_stopping=True,
                          max_iter=10000, tol=1e-5, random_state=0)
 
+ass = SelectKBest(mutual_info_classif)
+ress = ass.fit_transform(data['x'], data['y'])
 
+ass2 = kruskal_wallis(data['x'], data['y'])
+ass3 =SelectKBest(chi2) 
+ress = ass3.fit_transform(data['x'], data['y'])
 test_pipeline(
     data,
     Pipeline([
@@ -90,53 +99,6 @@ test_pipeline(
         ]),
     0,
     kfold_cross_val_predictions)
-
-test_pipeline(
-    data,
-    Pipeline([
-        ('nearest_centroid', NearestCentroid()),
-        ]),
-    0,
-    kfold_cross_val_predictions)
-test_pipeline(
-    data,
-    Pipeline([
-        ('pca', PCA()),
-        ('nearest_centroid', NearestCentroid()),
-        ]),
-    0,
-    kfold_cross_val_predictions)
-test_pipeline(
-    data,
-    Pipeline([
-        ('lda-dr', LinearDiscriminantAnalysis()),
-        ('nearest_centroid', NearestCentroid()),
-        ]),
-    0,
-    kfold_cross_val_predictions)
-test_pipeline(
-    data,
-    Pipeline([
-        ('lda', LinearDiscriminantAnalysis()),
-        ]),
-    0,
-    train_test_predictions)
-test_pipeline(
-    data,
-    Pipeline([
-        ('pca', PCA()),
-        ('lda', LinearDiscriminantAnalysis()),
-        ]),
-    0,
-    train_test_predictions)
-test_pipeline(
-    data,
-    Pipeline([
-        ('lda-dr', LinearDiscriminantAnalysis()),
-        ('lda', LinearDiscriminantAnalysis()),
-        ]),
-    0,
-    train_test_predictions)
 
 test_pipeline(
     data,
@@ -144,6 +106,53 @@ test_pipeline(
         ('nearest_centroid', NearestCentroid()),
         ]),
     0,
+    kfold_cross_val_predictions)
+test_pipeline(
+    data,
+    Pipeline([
+        ('pca', PCA()),
+        ('nearest_centroid', NearestCentroid()),
+        ]),
+    0,
+    kfold_cross_val_predictions)
+test_pipeline(
+    data,
+    Pipeline([
+        ('lda-dr', LinearDiscriminantAnalysis()),
+        ('nearest_centroid', NearestCentroid()),
+        ]),
+    0,
+    kfold_cross_val_predictions)
+test_pipeline(
+    data,
+    Pipeline([
+        ('lda', LinearDiscriminantAnalysis()),
+        ]),
+    0,
+    train_test_predictions)
+test_pipeline(
+    data,
+    Pipeline([
+        ('pca', PCA()),
+        ('lda', LinearDiscriminantAnalysis()),
+        ]),
+    0,
+    train_test_predictions)
+test_pipeline(
+    data,
+    Pipeline([
+        ('lda-dr', LinearDiscriminantAnalysis()),
+        ('lda', LinearDiscriminantAnalysis()),
+        ]),
+    0,
+    train_test_predictions)
+
+test_pipeline(
+    data,
+    Pipeline([
+        ('nearest_centroid', NearestCentroid()),
+        ]),
+    0,
     train_test_predictions)
 test_pipeline(
     data,
@@ -157,6 +166,16 @@ test_pipeline(
     data,
     Pipeline([
         ('lda-dr', LinearDiscriminantAnalysis()),
+        ('nearest_centroid', NearestCentroid()),
+        ]),
+    0,
+    train_test_predictions)
+
+test_pipeline(
+    data,
+    Pipeline([
+        ('kruskall-wallis', SelectKBest()),
+        #('lda-dr', LinearDiscriminantAnalysis()),
         ('nearest_centroid', NearestCentroid()),
         ]),
     0,
