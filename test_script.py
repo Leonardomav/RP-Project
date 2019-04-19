@@ -50,7 +50,7 @@ def get_preprocessed_data():
     data = categorize_data(data)
 
     data_y = data['RainTomorrow'].ravel()
-    data = data.drop(['Date', 'Location'], axis=1)
+    data = data.drop(['Date', 'Location', 'RainTomorrow'], axis=1)
 
     return {'x': data, 'y': data_y}
 
@@ -83,29 +83,38 @@ prediction_functions = [
     train_test_predictions,
 ]
 
+selected_features = [
+    3,
+    5,
+    10,
+]
+
 seeds_to_test = 1
 
 for fit_transform_option in fit_transform_options:
     for classifier in classifiers:
         for feature_selection_function in feature_selection_functions:
             for prediction_function in prediction_functions:
-                for seed in range(seeds_to_test):
-                    if fit_transform_option != None:
-                        test_pipeline(
-                            data,
-                            Pipeline([
-                                fit_transform_option,                            
-                                classifier
-                            ]),
-                            seed,
-                            feature_selection_function=feature_selection_function,
-                            prediction_function=prediction_function)
-                    else:
-                        test_pipeline(
-                            data,
-                            Pipeline([
-                                classifier
-                            ]),
-                            seed,
-                            feature_selection_function=feature_selection_function,
-                            prediction_function=prediction_function) 
+                for selected_feature in selected_features:
+                    for seed in range(seeds_to_test):
+                        if classifier[0] == 'mahalanobis' and fit_transform_option != None and fit_transform_option[0] =='lda-dr':
+                            pass
+                        elif fit_transform_option != None:
+                            test_pipeline(
+                                data,
+                                Pipeline([
+                                    fit_transform_option,                            
+                                    classifier
+                                ]),
+                                seed,
+                                feature_selection_function=feature_selection_function,
+                                prediction_function=prediction_function)
+                        else:
+                            test_pipeline(
+                                data,
+                                Pipeline([
+                                    classifier
+                                ]),
+                                seed,
+                                feature_selection_function=feature_selection_function,
+                                prediction_function=prediction_function) 

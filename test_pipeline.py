@@ -62,9 +62,13 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
     for procedure in pipeline.named_steps:
         test_name += procedure + ';'
     test_name = test_name[:-1] + "-" + str(seed)
+    if feature_selection_function != None:
+        test_name += '-' + feature_selection_function.__name__
+    if prediction_function != None:
+        test_name += '-' + prediction_function.__name__
     print("Running ", test_name)
     if feature_selection_function != None:
-        foo = feature_selection_function(data, n_features)
+        foo = feature_selection_function(data, n_features, seed)
     tested_data, predictions, prediction_function_name = prediction_function(pipeline, data, 0)
     test_name += "-" + prediction_function_name
     conf_matrix = confusion_matrix(tested_data, predictions)
