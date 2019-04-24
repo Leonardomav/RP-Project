@@ -56,9 +56,6 @@ def get_preprocessed_data():
 
 data = get_preprocessed_data()
 
-logistic = SGDClassifier(loss='log', penalty='l2', early_stopping=True,
-                         max_iter=10000, tol=1e-5, random_state=0)
-
 fit_transform_options = [
     None,
     ('lda-dr', LinearDiscriminantAnalysis()),

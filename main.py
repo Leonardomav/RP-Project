@@ -13,19 +13,7 @@ import dim_reduction
 import classifiers
 
 
-# [NOTE] Go back and forward to the Pre-processing, Feature reduction and Feature Selection phases until you are
-# satisfied with the results. It is a good idea to keep track of evolution of the performance of your algorithm during
-# this process. Try to show these trends in your final report, to be able to fundament all the issues involved (
-# choosing parameters, model fit, etc.)
-
-# TODO
-# "Define the appropriate performance metrics and justify your choices!"
-
-# TODO GENERAL
-# GUI
-# SHORT REPORT - META 1
-# box-plot to compare classifiers
-
+#This file is used as a notebook to explore the data
 
 def categorize_data(data):
     labels = data['WindGustDir'].astype('category').cat.categories.tolist()
