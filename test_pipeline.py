@@ -4,7 +4,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import (accuracy_score, classification_report, confusion_matrix)
+from sklearn.metrics import (roc_auc_score, accuracy_score, classification_report, confusion_matrix)
 
 
 def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_function = None, prediction_function = None, visual=False):
@@ -19,8 +19,8 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
     print("Running ", test_name)
     if feature_selection_function != None:
         foo = feature_selection_function(data, n_features, seed)
-    tested_data, predictions, prediction_function_name = prediction_function(pipeline, data, 0)
-    test_name += "-" + prediction_function_name
+    tested_data, predictions, score = prediction_function(pipeline, data, seed)
+    test_name += "-" + prediction_function.__name__
     conf_matrix = confusion_matrix(tested_data, predictions)
     class_report = classification_report(tested_data, predictions, output_dict=True)
     if visual:
@@ -40,5 +40,6 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
             class_report['1']['precision'],
             class_report['1']['recall'],
             accuracy_score(tested_data, predictions),
+            roc_auc_score(tested_data, score)
             ])
     print('Done')
