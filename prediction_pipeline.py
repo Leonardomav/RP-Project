@@ -1,6 +1,7 @@
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold, cross_val_predict, cross_val_score
 
+
 def kfold_cross_val_predictions(pipeline, data, seed):
     kfold = KFold(n_splits=10, random_state=seed)
     predictions = cross_val_predict(pipeline, data['x'], data['y'], cv=kfold)
@@ -14,5 +15,3 @@ def train_test_predictions(pipeline, data, seed):
     predictions = pipeline.predict(X_test)
     score = pipeline.score(X_test)
     return y_test, predictions, score
-
-

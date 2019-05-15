@@ -1,16 +1,15 @@
 import matplotlib
+
 matplotlib.use('TkAgg')
-from scipy.stats import kstest
 from test_pipeline import test_pipeline
-from sklearn.linear_model import SGDClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
-from sklearn.feature_selection import SelectKBest, mutual_info_classif, chi2
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.decomposition import PCA
 import pandas
 from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC
 from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
+import graphical_interface as gui
 
 
 def categorize_data(data):
@@ -42,6 +41,8 @@ def get_preprocessed_data():
 
     # Remove RISK_MM
     data_less_raw = data_less_raw.drop(['RISK_MM'], axis=1)
+    states = ["All"]
+    states.extend(data_less_raw['Location'].unique())
 
     data = data_less_raw.copy()
     data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
@@ -52,9 +53,10 @@ def get_preprocessed_data():
     data_y = data['RainTomorrow'].ravel()
     data = data.drop(['Date', 'Location', 'RainTomorrow'], axis=1)
 
-    return {'x': data, 'y': data_y}
+    return {'x': data, 'y': data_y}, states, len(data.columns)
 
-data = get_preprocessed_data()
+
+data, states, num_columns = get_preprocessed_data()
 
 fit_transform_options = [
     None,
@@ -88,30 +90,32 @@ selected_features = [
 
 seeds_to_test = 1
 
-for fit_transform_option in fit_transform_options:
-    for classifier in classifiers:
-        for feature_selection_function in feature_selection_functions:
-            for prediction_function in prediction_functions:
-                for selected_feature in selected_features:
-                    for seed in range(seeds_to_test):
-                        if classifier[0] == 'mahalanobis' and fit_transform_option != None and fit_transform_option[0] =='lda-dr':
-                            pass
-                        elif fit_transform_option != None:
-                            test_pipeline(
-                                data,
-                                Pipeline([
-                                    fit_transform_option,                            
-                                    classifier
-                                ]),
-                                seed,
-                                feature_selection_function=feature_selection_function,
-                                prediction_function=prediction_function)
-                        else:
-                            test_pipeline(
-                                data,
-                                Pipeline([
-                                    classifier
-                                ]),
-                                seed,
-                                feature_selection_function=feature_selection_function,
-                                prediction_function=prediction_function) 
+gui.GUI(states, num_columns, feature_selection_functions, fit_transform_options, prediction_functions, classifiers)
+
+# for fit_transform_option in fit_transform_options:
+#     for classifier in classifiers:
+#         for feature_selection_function in feature_selection_functions:
+#             for prediction_function in prediction_functions:
+#                 for selected_feature in selected_features:
+#                     for seed in range(seeds_to_test):
+#                         if classifier[0] == 'mahalanobis' and fit_transform_option != None and fit_transform_option[0] =='lda-dr':
+#                             pass
+#                         elif fit_transform_option != None:
+#                             test_pipeline(
+#                                 data,
+#                                 Pipeline([
+#                                     fit_transform_option,
+#                                     classifier
+#                                 ]),
+#                                 seed,
+#                                 feature_selection_function=feature_selection_function,
+#                                 prediction_function=prediction_function)
+#                         else:
+#                             test_pipeline(
+#                                 data,
+#                                 Pipeline([
+#                                     classifier
+#                                 ]),
+#                                 seed,
+#                                 feature_selection_function=feature_selection_function,
+#                                 prediction_function=prediction_function)
