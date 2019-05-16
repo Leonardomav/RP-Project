@@ -90,7 +90,8 @@ selected_features = [
 
 seeds_to_test = 1
 
-gui.GUI(states, num_columns, feature_selection_functions, fit_transform_options, prediction_functions, classifiers)
+gui.GUI(data, states, num_columns, feature_selection_functions, fit_transform_options, prediction_functions,
+        classifiers)
 
 # for fit_transform_option in fit_transform_options:
 #     for classifier in classifiers:
@@ -98,7 +99,8 @@ gui.GUI(states, num_columns, feature_selection_functions, fit_transform_options,
 #             for prediction_function in prediction_functions:
 #                 for selected_feature in selected_features:
 #                     for seed in range(seeds_to_test):
-#                         if classifier[0] == 'mahalanobis' and fit_transform_option != None and fit_transform_option[0] =='lda-dr':
+#                         if classifier[0] == 'mahalanobis' and fit_transform_option != None and fit_transform_option[
+#                             0] == 'lda-dr':
 #                             pass
 #                         elif fit_transform_option != None:
 #                             test_pipeline(
