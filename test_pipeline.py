@@ -14,15 +14,15 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
         procedure_name_list += procedure + ';'
     csv_values.append(procedure_name_list)
     csv_values.append(str(seed))
-    if feature_selection_function != None:
+    if feature_selection_function is not None:
         csv_values.append(feature_selection_function.__name__)
     else:
         csv_values.append("None")
-    if prediction_function != None:
+    if prediction_function is not None:
         csv_values.append(prediction_function.__name__)
     else:
         csv_values.append("None")
-    if feature_selection_function != None:
+    if feature_selection_function is not None:
         foo = feature_selection_function(data, n_features, seed)
     tested_data, predictions, roc_score = prediction_function(pipeline, data, seed)
     csv_values.append(str(n_features))

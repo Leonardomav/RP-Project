@@ -190,8 +190,8 @@ def GUI(data, states, n_features, feature_sel, dim_reduction, predict_methods, c
                     prediction_function=prediction_function)
                 warText.configure(text="")
         except Exception as e:
-            print(e)
-            warText.configure(text="This combination is invalid")
+             print(e)
+             warText.configure(text="This combination is invalid")
 
     btn = Button(window, text="Run Configuration", command=clicked)
 
