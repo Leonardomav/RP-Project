@@ -104,6 +104,7 @@ for fit_transform_option in fit_transform_options:
                                     classifier
                                 ]),
                                 seed,
+                                n_features=selected_features,
                                 feature_selection_function=feature_selection_function,
                                 prediction_function=prediction_function)
                         else:
@@ -113,5 +114,6 @@ for fit_transform_option in fit_transform_options:
                                     classifier
                                 ]),
                                 seed,
+                                n_features=selected_feature,
                                 feature_selection_function=feature_selection_function,
                                 prediction_function=prediction_function) 
