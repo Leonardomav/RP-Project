@@ -1,16 +1,15 @@
 import matplotlib
+
 matplotlib.use('TkAgg')
-from scipy.stats import kstest
 from test_pipeline import test_pipeline
-from sklearn.linear_model import SGDClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
-from sklearn.feature_selection import SelectKBest, mutual_info_classif, chi2
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.decomposition import PCA
 import pandas
 from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC
 from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
+import graphical_interface as gui
 
 
 def categorize_data(data):
@@ -42,6 +41,8 @@ def get_preprocessed_data():
 
     # Remove RISK_MM
     data_less_raw = data_less_raw.drop(['RISK_MM'], axis=1)
+    states = ["All"]
+    states.extend(data_less_raw['Location'].unique())
 
     data = data_less_raw.copy()
     data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
@@ -52,9 +53,10 @@ def get_preprocessed_data():
     data_y = data['RainTomorrow'].ravel()
     data = data.drop(['Date', 'Location', 'RainTomorrow'], axis=1)
 
-    return {'x': data, 'y': data_y}
+    return {'x': data, 'y': data_y}, states, len(data.columns)
 
-data = get_preprocessed_data()
+
+data, states, num_columns = get_preprocessed_data()
 
 fit_transform_options = [
     None,
