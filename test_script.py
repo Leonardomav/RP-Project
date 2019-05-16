@@ -90,34 +90,32 @@ selected_features = [
 
 seeds_to_test = 1
 
-gui.GUI(data, states, num_columns, feature_selection_functions, fit_transform_options, prediction_functions,
-        classifiers)
-
-# for fit_transform_option in fit_transform_options:
-#     for classifier in classifiers:
-#         for feature_selection_function in feature_selection_functions:
-#             for prediction_function in prediction_functions:
-#                 for selected_feature in selected_features:
-#                     for seed in range(seeds_to_test):
-#                         if classifier[0] == 'mahalanobis' and fit_transform_option != None and fit_transform_option[
-#                             0] == 'lda-dr':
-#                             pass
-#                         elif fit_transform_option != None:
-#                             test_pipeline(
-#                                 data,
-#                                 Pipeline([
-#                                     fit_transform_option,
-#                                     classifier
-#                                 ]),
-#                                 seed,
-#                                 feature_selection_function=feature_selection_function,
-#                                 prediction_function=prediction_function)
-#                         else:
-#                             test_pipeline(
-#                                 data,
-#                                 Pipeline([
-#                                     classifier
-#                                 ]),
-#                                 seed,
-#                                 feature_selection_function=feature_selection_function,
-#                                 prediction_function=prediction_function)
+for fit_transform_option in fit_transform_options:
+    for classifier in classifiers:
+        for feature_selection_function in feature_selection_functions:
+            for prediction_function in prediction_functions:
+                for selected_feature in selected_features:
+                    for seed in range(seeds_to_test):
+                        if classifier[0] == 'mahalanobis' and fit_transform_option != None and fit_transform_option[0] =='lda-dr':
+                            pass
+                        elif fit_transform_option != None:
+                            test_pipeline(
+                                data,
+                                Pipeline([
+                                    fit_transform_option,                            
+                                    classifier
+                                ]),
+                                seed,
+                                n_features=selected_feature,
+                                feature_selection_function=feature_selection_function,
+                                prediction_function=prediction_function)
+                        else:
+                            test_pipeline(
+                                data,
+                                Pipeline([
+                                    classifier
+                                ]),
+                                seed,
+                                n_features=selected_feature,
+                                feature_selection_function=feature_selection_function,
+                                prediction_function=prediction_function) 
