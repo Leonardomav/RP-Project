@@ -21,11 +21,6 @@ def categorize_data(data):
         replace_map = {c: {k: v for k, v in zip(labels, list(range(1, len(labels) + 1)))}}
         data.replace(replace_map, inplace=True)
 
-    labels = data['Location'].astype('category').cat.categories.tolist()
-    replace_map = {'Location': {k: v for k, v in zip(labels, list(range(1, len(labels) + 1)))}}
-    data.replace(replace_map, inplace=True)
-    data['Location'].astype('category')
-
     return data
 
 
@@ -52,12 +47,21 @@ def get_preprocessed_data():
     data = categorize_data(data)
 
     data_y = data['RainTomorrow'].ravel()
-    data = data.drop(['Date', 'Location', 'RainTomorrow'], axis=1)
+    data_loc = data.drop(['Date'], axis=1)
+    data = data_loc.drop(['Location', 'RainTomorrow'], axis=1)
 
-    return {'x': data, 'y': data_y}, states, len(data.columns)
+    return {'x': data, 'y': data_y}, states, len(data.columns), data_loc
 
 
-def GUI(data, states, n_features, feature_sel, dim_reduction, predict_methods, classifiers):
+def select_location(data_loc, loc):
+    data_loc = data_loc.loc[data_loc['Location'] == loc]
+    data_y = data_loc['RainTomorrow'].ravel()
+    data_loc = data_loc.drop(['Location', 'RainTomorrow'], axis=1)
+
+    return {'x': data_loc, 'y': data_y}
+
+
+def GUI(data, data_loc, states, n_features, feature_sel, dim_reduction, predict_methods, classifiers):
     window = Tk()
     window.title("RP - GUI")
     title = Label(window, text='Weather In Australia - GUI', font=("Arial Bold", 20))
@@ -130,7 +134,7 @@ def GUI(data, states, n_features, feature_sel, dim_reduction, predict_methods, c
     warText = Label(window, text='', font=("Arial", 8), foreground="red")
     warText.grid(column=1, row=6, columnspan=2)
 
-    def clicked():
+    def clicked(data):
         seed = 3030
 
         for i in feature_sel:
@@ -162,38 +166,43 @@ def GUI(data, states, n_features, feature_sel, dim_reduction, predict_methods, c
                 classifier = i
                 break
 
-        try:
-            print("Run config")
-            if comb6.get() == 'mahalanobis' and comb1.get() != "None" and comb3.get() == 'lda-dr':
-                warText.configure(text="This combination is invalid")
+        # try:
+        print("Run config")
+        if comb0.get() != "All":
+            data = select_location(data_loc, comb0.get())
+            print("__________________")
+            print(data)
 
-            elif comb3.get() != "None":
-                test_pipeline(
-                    data,
-                    Pipeline([
-                        fit_transform_option,
-                        classifier
-                    ]),
-                    seed,
-                    feature_selection_function=feature_selection_function,
-                    prediction_function=prediction_function)
-                warText.configure(text="")
+        if comb6.get() == 'mahalanobis' and comb1.get() != "None" and comb3.get() == 'lda-dr':
+            warText.configure(text="This combination is invalid")
 
-            else:
-                test_pipeline(
-                    data,
-                    Pipeline([
-                        classifier
-                    ]),
-                    seed,
-                    feature_selection_function=feature_selection_function,
-                    prediction_function=prediction_function)
-                warText.configure(text="")
-        except Exception as e:
-             print(e)
-             warText.configure(text="This combination is invalid")
+        elif comb3.get() != "None":
+            test_pipeline(
+                data,
+                Pipeline([
+                    fit_transform_option,
+                    classifier
+                ]),
+                seed,
+                feature_selection_function=feature_selection_function,
+                prediction_function=prediction_function)
+            warText.configure(text="")
 
-    btn = Button(window, text="Run Configuration", command=clicked)
+        else:
+            test_pipeline(
+                data,
+                Pipeline([
+                    classifier
+                ]),
+                seed,
+                feature_selection_function=feature_selection_function,
+                prediction_function=prediction_function)
+            warText.configure(text="")
+        # except Exception as e:
+        #     print(e)
+        #     warText.configure(text="This combination is invalid")
+
+    btn = Button(window, text="Run Configuration", command=lambda: clicked(data))
 
     btn.grid(column=1, row=7, columnspan=2)
 
@@ -201,7 +210,7 @@ def GUI(data, states, n_features, feature_sel, dim_reduction, predict_methods, c
     window.mainloop()
 
 
-data, states, num_columns = get_preprocessed_data()
+data, states, num_columns, data_loc = get_preprocessed_data()
 
 fit_transform_options = [
     None,
@@ -235,5 +244,5 @@ selected_features = [
 
 seeds_to_test = 1
 
-GUI(data, states, num_columns, feature_selection_functions, fit_transform_options, prediction_functions,
+GUI(data, data_loc, states, num_columns, feature_selection_functions, fit_transform_options, prediction_functions,
     classifiers)
