@@ -9,7 +9,6 @@ from sklearn.decomposition import PCA
 import pandas
 from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC
 from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
-import graphical_interface as gui
 
 
 def categorize_data(data):
@@ -65,7 +64,7 @@ fit_transform_options = [
 ]
 
 classifiers = [
-    ('lda', LinearDiscriminantAnalysis()),
+    #('lda', LinearDiscriminantAnalysis()),
     ('euclidean', NearestCentroid(metric='euclidean')),
     ('mahalanobis', NearestCentroid(metric='mahalanobis')),
 ]
