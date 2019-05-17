@@ -1,64 +1,16 @@
 from tkinter import *
 from tkinter.ttk import *
 import matplotlib
-
-matplotlib.use('TkAgg')
 from test_pipeline import test_pipeline
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.decomposition import PCA
-import pandas
 from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC
 from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
+import data_preprocessment as dp
 
-
-def categorize_data(data):
-    labels = data['WindGustDir'].astype('category').cat.categories.tolist()
-    col = ['WindGustDir', 'WindDir9am', 'WindDir3pm']
-
-    for c in col:
-        replace_map = {c: {k: v for k, v in zip(labels, list(range(1, len(labels) + 1)))}}
-        data.replace(replace_map, inplace=True)
-
-    return data
-
-
-def get_preprocessed_data():
-    # Load data set
-    filename = 'weatherAUS.csv'
-    data_raw = pandas.read_csv(filename)
-
-    # Remove features that have more than 20% of missing values
-    data_less_raw = data_raw.dropna(1, thresh=len(data_raw.index) * 0.8)
-
-    # Remove examples that have any missing values
-    data_less_raw = data_less_raw.dropna(0, how='any')
-
-    # Remove RISK_MM
-    data_less_raw = data_less_raw.drop(['RISK_MM'], axis=1)
-    states = ["All"]
-    states.extend(data_less_raw['Location'].unique())
-
-    data = data_less_raw.copy()
-    data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
-    data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
-
-    data = categorize_data(data)
-
-    data_y = data['RainTomorrow'].ravel()
-    data_loc = data.drop(['Date'], axis=1)
-    data = data_loc.drop(['Location', 'RainTomorrow'], axis=1)
-
-    return {'x': data, 'y': data_y}, states, len(data.columns), data_loc
-
-
-def select_location(data_loc, loc):
-    data_loc = data_loc.loc[data_loc['Location'] == loc]
-    data_y = data_loc['RainTomorrow'].ravel()
-    data_loc = data_loc.drop(['Location', 'RainTomorrow'], axis=1)
-
-    return {'x': data_loc, 'y': data_y}
+matplotlib.use('TkAgg')
 
 
 def GUI(data, data_loc, states, n_features, feature_sel, dim_reduction, predict_methods, classifiers):
@@ -166,41 +118,41 @@ def GUI(data, data_loc, states, n_features, feature_sel, dim_reduction, predict_
                 classifier = i
                 break
 
-        # try:
-        print("Run config")
-        if comb0.get() != "All":
-            data = select_location(data_loc, comb0.get())
-            print("__________________")
-            print(data)
+        try:
+            print("Run config")
+            if comb0.get() != "All":
+                data = dp.select_location(data_loc, comb0.get())
 
-        if comb6.get() == 'mahalanobis' and comb1.get() != "None" and comb3.get() == 'lda-dr':
+            if comb6.get() == 'mahalanobis' and comb1.get() != "None" and comb3.get() == 'lda-dr':
+                warText.configure(text="This combination is invalid")
+
+            elif comb3.get() != "None":
+                test_pipeline(
+                    data,
+                    Pipeline([
+                        fit_transform_option,
+                        classifier
+                    ]),
+                    seed,
+                    n_features=int(comb2.get()),
+                    feature_selection_function=feature_selection_function,
+                    prediction_function=prediction_function)
+                warText.configure(text="")
+
+            else:
+                test_pipeline(
+                    data,
+                    Pipeline([
+                        classifier
+                    ]),
+                    seed,
+                    n_features=int(comb2.get()),
+                    feature_selection_function=feature_selection_function,
+                    prediction_function=prediction_function)
+                warText.configure(text="")
+        except Exception as e:
+            print(e)
             warText.configure(text="This combination is invalid")
-
-        elif comb3.get() != "None":
-            test_pipeline(
-                data,
-                Pipeline([
-                    fit_transform_option,
-                    classifier
-                ]),
-                seed,
-                feature_selection_function=feature_selection_function,
-                prediction_function=prediction_function)
-            warText.configure(text="")
-
-        else:
-            test_pipeline(
-                data,
-                Pipeline([
-                    classifier
-                ]),
-                seed,
-                feature_selection_function=feature_selection_function,
-                prediction_function=prediction_function)
-            warText.configure(text="")
-        # except Exception as e:
-        #     print(e)
-        #     warText.configure(text="This combination is invalid")
 
     btn = Button(window, text="Run Configuration", command=lambda: clicked(data))
 
@@ -210,39 +162,36 @@ def GUI(data, data_loc, states, n_features, feature_sel, dim_reduction, predict_
     window.mainloop()
 
 
-data, states, num_columns, data_loc = get_preprocessed_data()
+def main():
+    data, states, num_columns, data_loc = dp.get_preprocessed_data()
 
-fit_transform_options = [
-    None,
-    ('lda-dr', LinearDiscriminantAnalysis()),
-    ('pca', PCA()),
-]
+    fit_transform_options = [
+        None,
+        ('lda-dr', LinearDiscriminantAnalysis()),
+        ('pca', PCA()),
+    ]
 
-classifiers = [
-    ('lda', LinearDiscriminantAnalysis()),
-    ('euclidean', NearestCentroid(metric='euclidean')),
-    ('mahalanobis', NearestCentroid(metric='mahalanobis')),
-]
+    classifiers = [
+        ('lda', LinearDiscriminantAnalysis()),
+        ('euclidean', NearestCentroid(metric='euclidean')),
+        ('mahalanobis', NearestCentroid(metric='mahalanobis')),
+    ]
 
-feature_selection_functions = [
-    None,
-    kruskal_wallis,
-    select_k_best,
-    ROC,
-]
+    feature_selection_functions = [
+        None,
+        kruskal_wallis,
+        select_k_best,
+        ROC,
+    ]
 
-prediction_functions = [
-    kfold_cross_val_predictions,
-    train_test_predictions,
-]
+    prediction_functions = [
+        kfold_cross_val_predictions,
+        train_test_predictions,
+    ]
 
-selected_features = [
-    3,
-    5,
-    10,
-]
+    GUI(data, data_loc, states, num_columns, feature_selection_functions, fit_transform_options, prediction_functions,
+        classifiers)
 
-seeds_to_test = 1
 
-GUI(data, data_loc, states, num_columns, feature_selection_functions, fit_transform_options, prediction_functions,
-    classifiers)
+if __name__ == '__main__':
+    main()

@@ -1,13 +1,15 @@
 import csv
 import datetime
 import matplotlib
+
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
-from sklearn.metrics import (roc_auc_score, accuracy_score, classification_report, confusion_matrix)
+from sklearn.metrics import (accuracy_score, classification_report, confusion_matrix)
 from visualizations import plot_confusion_matrix
 
 
-def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_function = None, prediction_function = None, visual=False):
+def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_function=None, prediction_function=None,
+                  visual=False):
     csv_values = [str(datetime.datetime.now())]
     procedure_name_list = ''
     for procedure in pipeline.named_steps:
@@ -30,21 +32,21 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
     class_report = classification_report(tested_data, predictions, output_dict=True)
     if visual:
         plot_confusion_matrix(tested_data, predictions, [0, 1],
-                            normalize=False,
-                            title=None,
-                            cmap=plt.cm.Blues)
+                              normalize=False,
+                              title=None,
+                              cmap=plt.cm.Blues)
         plt.show()
     with open('results.csv', 'a') as result_csv:
         writer = csv.writer(result_csv)
         csv_values.extend([
-                            class_report['0']['f1-score'],
-                            class_report['0']['precision'],
-                            class_report['0']['recall'],
-                            class_report['1']['f1-score'],
-                            class_report['1']['precision'],
-                            class_report['1']['recall'],
-                            accuracy_score(tested_data, predictions),
-                            roc_score]
-                        )
+            class_report['0']['f1-score'],
+            class_report['0']['precision'],
+            class_report['0']['recall'],
+            class_report['1']['f1-score'],
+            class_report['1']['precision'],
+            class_report['1']['recall'],
+            accuracy_score(tested_data, predictions),
+            roc_score]
+        )
         writer.writerow(csv_values)
     print('Done')

@@ -1,6 +1,4 @@
 import matplotlib
-
-matplotlib.use('TkAgg')
 from test_pipeline import test_pipeline
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
@@ -9,54 +7,11 @@ from sklearn.decomposition import PCA
 import pandas
 from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC
 from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
-import graphical_interface as gui
+import data_preprocessment
 
+matplotlib.use('TkAgg')
 
-def categorize_data(data):
-    labels = data['WindGustDir'].astype('category').cat.categories.tolist()
-    col = ['WindGustDir', 'WindDir9am', 'WindDir3pm']
-
-    for c in col:
-        replace_map = {c: {k: v for k, v in zip(labels, list(range(1, len(labels) + 1)))}}
-        data.replace(replace_map, inplace=True)
-
-    labels = data['Location'].astype('category').cat.categories.tolist()
-    replace_map = {'Location': {k: v for k, v in zip(labels, list(range(1, len(labels) + 1)))}}
-    data.replace(replace_map, inplace=True)
-    data['Location'].astype('category')
-
-    return data
-
-
-def get_preprocessed_data():
-    # Load data set
-    filename = 'weatherAUS.csv'
-    data_raw = pandas.read_csv(filename)
-
-    # Remove features that have more than 20% of missing values
-    data_less_raw = data_raw.dropna(1, thresh=len(data_raw.index) * 0.8)
-
-    # Remove examples that have any missing values
-    data_less_raw = data_less_raw.dropna(0, how='any')
-
-    # Remove RISK_MM
-    data_less_raw = data_less_raw.drop(['RISK_MM'], axis=1)
-    states = ["All"]
-    states.extend(data_less_raw['Location'].unique())
-
-    data = data_less_raw.copy()
-    data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
-    data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
-
-    data = categorize_data(data)
-
-    data_y = data['RainTomorrow'].ravel()
-    data = data.drop(['Date', 'Location', 'RainTomorrow'], axis=1)
-
-    return {'x': data, 'y': data_y}, states, len(data.columns)
-
-
-data, states, num_columns = get_preprocessed_data()
+data, states, num_columns, data_loc = data_preprocessment.get_preprocessed_data()
 
 fit_transform_options = [
     None,
@@ -96,13 +51,14 @@ for fit_transform_option in fit_transform_options:
             for prediction_function in prediction_functions:
                 for selected_feature in selected_features:
                     for seed in range(seeds_to_test):
-                        if classifier[0] == 'mahalanobis' and fit_transform_option != None and fit_transform_option[0] =='lda-dr':
+                        if classifier[0] == 'mahalanobis' and fit_transform_option is not None and fit_transform_option[
+                            0] == 'lda-dr':
                             pass
-                        elif fit_transform_option != None:
+                        elif fit_transform_option is not None:
                             test_pipeline(
                                 data,
                                 Pipeline([
-                                    fit_transform_option,                            
+                                    fit_transform_option,
                                     classifier
                                 ]),
                                 seed,
@@ -118,4 +74,4 @@ for fit_transform_option in fit_transform_options:
                                 seed,
                                 n_features=selected_feature,
                                 feature_selection_function=feature_selection_function,
-                                prediction_function=prediction_function) 
+                                prediction_function=prediction_function)
