@@ -5,11 +5,15 @@ from test_pipeline import test_pipeline
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
 from sklearn.neighbors.nearest_centroid import NearestCentroid
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.neighbors.kde import KernelDensity
 from sklearn.decomposition import PCA
+from sklearn.naive_bayes import GaussianNB
 import pandas
 from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC
 from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
-
+import copy
 
 def categorize_data(data):
     labels = data['WindGustDir'].astype('category').cat.categories.tolist()
@@ -61,19 +65,24 @@ fit_transform_options = [
     None,
     ('lda-dr', LinearDiscriminantAnalysis()),
     ('pca', PCA()),
+    ('kernel_density', KernelDensity(kernel='gaussian')),
+    ('knearest_neighbours', KNeighborsClassifier()),
 ]
 
 classifiers = [
     #('lda', LinearDiscriminantAnalysis()),
-    ('euclidean', NearestCentroid(metric='euclidean')),
-    ('mahalanobis', NearestCentroid(metric='mahalanobis')),
+    #('euclidean', NearestCentroid(metric='euclidean')),
+    #('mahalanobis', NearestCentroid(metric='mahalanobis')),
+    #('bayes', GaussianNB()),
+    ('knearest_neighbours', KNeighborsClassifier()),
+    ('svm', SVC()),
 ]
 
 feature_selection_functions = [
     None,
-    kruskal_wallis,
-    select_k_best,
-    ROC,
+    #kruskal_wallis,
+    #select_k_best,
+    #ROC,
 ]
 
 prediction_functions = [
@@ -85,6 +94,7 @@ selected_features = [
     3,
     5,
     10,
+    16,
 ]
 
 seeds_to_test = 1
@@ -93,28 +103,39 @@ for fit_transform_option in fit_transform_options:
     for classifier in classifiers:
         for feature_selection_function in feature_selection_functions:
             for prediction_function in prediction_functions:
-                for selected_feature in selected_features:
+                for n_feature in selected_features:
                     for seed in range(seeds_to_test):
                         if classifier[0] == 'mahalanobis' and fit_transform_option != None and fit_transform_option[0] =='lda-dr':
                             pass
                         elif fit_transform_option != None:
+                            fit_transform_option = ("pca", PCA(n_components = n_feature)) if fit_transform_option[0] == 'pca' else fit_transform_option[1]
                             test_pipeline(
-                                data,
+                                copy.deepcopy(data),
                                 Pipeline([
                                     fit_transform_option,                            
                                     classifier
                                 ]),
                                 seed,
-                                n_features=selected_feature,
+                                n_features=n_feature,
                                 feature_selection_function=feature_selection_function,
                                 prediction_function=prediction_function)
                         else:
                             test_pipeline(
-                                data,
+                                copy.deepcopy(data),
                                 Pipeline([
                                     classifier
                                 ]),
                                 seed,
-                                n_features=selected_feature,
+                                n_features=n_feature,
                                 feature_selection_function=feature_selection_function,
                                 prediction_function=prediction_function) 
+                        """
+                        except:
+                            if fit_transform_option != None:
+                                print(fit_transform_option[1])
+                            print(classifier[1])
+                            if feature_selection_function != None:
+                                print(feature_selection_function.__name__)
+                            print(prediction_function.__name__)
+                            print(n_feature)
+                        """

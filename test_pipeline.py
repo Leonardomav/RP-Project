@@ -24,7 +24,9 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
         csv_values.append("None")
     if feature_selection_function != None:
         foo = feature_selection_function(data, n_features, seed)
-    tested_data, predictions, roc_score = prediction_function(pipeline, data, seed)
+        aux = data['x'][foo]
+        data['x'] = aux
+    tested_data, predictions = prediction_function(pipeline, data, seed)
     csv_values.append(str(n_features))
     conf_matrix = confusion_matrix(tested_data, predictions)
     class_report = classification_report(tested_data, predictions, output_dict=True)
@@ -44,7 +46,7 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
                             class_report['1']['precision'],
                             class_report['1']['recall'],
                             accuracy_score(tested_data, predictions),
-                            roc_score]
+                            ]
                         )
         writer.writerow(csv_values)
     print('Done')
