@@ -13,19 +13,19 @@ def kruskal_wallis(data, n_features=16, seed=None):
         rank.append((i, scipy.stats.kruskal(setX, data['y'])[0]))
 
     rank = sorted(rank, key=lambda x: x[1])
-    keep_index = []
+    keep_features = []
     for i in range(n_features):
-        keep_index.append(rank[i][0])
+        keep_features.append(rank[i][0])
 
-    return keep_index
+    return keep_features
 
 
 def select_k_best(data, n_features=16, seed=None):
     clf = SelectKBest(mutual_info_classif, k=n_features)
     new_data = clf.fit_transform(data['x'], data['y'].ravel())
     mask = clf.get_support()
-    keep_index=np.where(mask)[0]
-    return keep_index
+    keep_features=data['x'].columns[mask]
+    return keep_features
 
 
 def ROC(data, n_features=16, seed=None):
@@ -40,9 +40,8 @@ def ROC(data, n_features=16, seed=None):
         rank.append([i,roc_auc_score(y_test, y_score)])
 
     rank = sorted(rank, key=lambda x: x[1])
-    keep_index = []
+    keep_features = []
     for i in range(n_features):
-        keep_index.append(rank[i][0])
-
-    return keep_index
+        keep_features.append(rank[i][0])
+    return keep_features
 
