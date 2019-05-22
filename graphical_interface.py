@@ -62,11 +62,6 @@ def GUI(data, data_loc, states, n_features, feature_sel, dim_reduction, predict_
     lbl3 = Label(window, text='N of Features:', font=("Arial", 12))
     lbl3.grid(column=2, row=3, pady=5, padx=(0, 15), sticky="W")
 
-    comb4 = Combobox(window, state="readonly")
-    comb4['values'] = [i + 1 for i in range(n_features)]
-    comb4.current(0)  # set the selected item
-    comb4.grid(column=3, row=3)
-
     lbl4 = Label(window, text='Prediction Method:', font=("Arial", 12))
     lbl4.grid(column=0, row=4, pady=5, padx=(10, 0), sticky="W")
 
