@@ -1,5 +1,6 @@
 import matplotlib
 import pandas
+import sklearn
 
 matplotlib.use('TkAgg')
 
@@ -13,6 +14,20 @@ def categorize_data(data):
         data.replace(replace_map, inplace=True)
 
     return data
+
+def normalize_data(data):
+    # normaliza data
+    data_normalized = data.drop(['Date', 'Location'], axis=1)
+    x = data_normalized.values
+    scaler = sklearn.preprocessing.StandardScaler()
+    x_scaled = scaler.fit_transform(x)
+    data_normalized = pandas.DataFrame(x_scaled, columns=data_normalized.columns)
+
+    data_y_norm = data_normalized[['RainTomorrow']]
+
+    data_normalized = data_normalized.drop(['RainTomorrow'], axis=1)
+
+    return data_normalized, data_y_norm, x_scaled
 
 
 def get_preprocessed_data():
@@ -39,7 +54,8 @@ def get_preprocessed_data():
 
     data_y = data['RainTomorrow'].ravel()
     data_loc = data.drop(['Date'], axis=1)
-    data = data_loc.drop(['Location', 'RainTomorrow'], axis=1)
+
+    data, _, _= normalize_data(data)
 
     return {'x': data, 'y': data_y}, states, len(data.columns), data_loc
 

@@ -12,6 +12,7 @@ import pandas
 from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC
 from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
 import data_preprocessment
+import copy
 
 matplotlib.use('TkAgg')
 
@@ -19,38 +20,38 @@ data, states, num_columns, data_loc = data_preprocessment.get_preprocessed_data(
 
 fit_transform_options = [
     None,
-    ('lda-dr', LinearDiscriminantAnalysis()),
-    ('pca', PCA()),
-    ('kernel_density', KernelDensity(kernel='gaussian')),
-    ('knearest_neighbours', KNeighborsClassifier()),
+    #('lda-dr', LinearDiscriminantAnalysis()),
+    #('pca', PCA()),
+    #('kernel_density', KernelDensity(kernel='gaussian')),
+    #('knearest_neighbours', KNeighborsClassifier()),
 ]
 
 classifiers = [
-    #('lda', LinearDiscriminantAnalysis()),
-    #('euclidean', NearestCentroid(metric='euclidean')),
-    #('mahalanobis', NearestCentroid(metric='mahalanobis')),
-    #('bayes', GaussianNB()),
+    ('lda', LinearDiscriminantAnalysis()),
+    ('euclidean', NearestCentroid(metric='euclidean')),
+    ('mahalanobis', NearestCentroid(metric='mahalanobis')),
+    ('bayes', GaussianNB()),
     ('knearest_neighbours', KNeighborsClassifier()),
     ('svm', SVC()),
 ]
 
 feature_selection_functions = [
-    None,
-    #kruskal_wallis,
-    #select_k_best,
-    #ROC,
+    #None,
+    kruskal_wallis,
+    select_k_best,
+    ROC,
 ]
 
 prediction_functions = [
     kfold_cross_val_predictions,
-    train_test_predictions,
+    #train_test_predictions,
 ]
 
 selected_features = [
-    3,
+    #3,
     5,
-    10,
-    16,
+    #10,
+    #16,
 ]
 
 seeds_to_test = 1

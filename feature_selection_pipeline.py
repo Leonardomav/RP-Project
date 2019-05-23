@@ -1,8 +1,9 @@
 import scipy
-from sklearn.feature_selection import mutual_info_classif, SelectKBest
+from sklearn.feature_selection import mutual_info_classif, SelectKBest, RFE
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 import sklearn.model_selection
 from sklearn.metrics import roc_auc_score
+
 import numpy as np
 
 

@@ -47,8 +47,7 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
             class_report['1']['f1-score'],
             class_report['1']['precision'],
             class_report['1']['recall'],
-            accuracy_score(tested_data, predictions),
-            roc_score]
+            accuracy_score(tested_data, predictions)]
         )
         writer.writerow(csv_values)
     print('Done')
