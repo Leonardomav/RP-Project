@@ -68,7 +68,12 @@ def plot_confusion_matrix(y_true, y_pred, classes,
 
 
 def box_plot_comparison(results):
-    #WIP
+    """
+    renders a box plot to compare the multiple classifiers
+    Recieves:
+        results -> from all classifiers
+        data -> dataframe to predict
+    """
     _names = []
     fig = plt.figure()
     fig.suptitle('Algorithm Comparison')

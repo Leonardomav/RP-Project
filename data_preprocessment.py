@@ -5,6 +5,15 @@ matplotlib.use('TkAgg')
 
 
 def categorize_data(data):
+    """
+    Replaces all cardinal points with an int value
+
+    Recieves:
+        data -> dataframe
+    Returns:
+        data -> categorized dataframe
+    """
+
     labels = data['WindGustDir'].astype('category').cat.categories.tolist()
     col = ['WindGustDir', 'WindDir9am', 'WindDir3pm']
 
@@ -16,6 +25,18 @@ def categorize_data(data):
 
 
 def get_preprocessed_data():
+    """
+    Main preprocessment function
+    Loads file and removes unnecessary columns and rows from the data frame and calls categorization function
+
+    Returns:
+        {'x': data, 'y': data_y} -> new data structure 
+        states -> list of available states
+        len(data.columns) -> num of features
+        data_loc -> data structure with feature location
+    
+    """
+
     # Load data set
     filename = 'weatherAUS.csv'
     data_raw = pandas.read_csv(filename)
@@ -32,6 +53,8 @@ def get_preprocessed_data():
     states.extend(data_less_raw['Location'].unique())
 
     data = data_less_raw.copy()
+
+    # Categorize
     data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
     data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
 
@@ -45,6 +68,14 @@ def get_preprocessed_data():
 
 
 def select_location(data_loc, loc):
+    """
+    This function returns a new data frame with only measurements from the selected location
+    Recieves:
+        data_loc -> data structure with feature location
+        loc -> location selected
+    Returns:
+        {'x': data, 'y': data_y} -> new data structure 
+    """
     data_loc = data_loc.loc[data_loc['Location'] == loc]
     data_y = data_loc['RainTomorrow'].ravel()
     data_loc = data_loc.drop(['Location', 'RainTomorrow'], axis=1)

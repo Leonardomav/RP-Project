@@ -7,6 +7,15 @@ import numpy as np
 
 
 def kruskal_wallis(data, n_features=16, seed=None):
+    """
+    preforms feature selection using kruskal wallis
+    Recieves:
+        data -> data frame
+        n_features -> number of remaining features
+    Returns:
+        keep_features -> list with the naime of the choosen features
+    """
+
     rank = []
     for i in data['x'].columns:
         setX = data['x'][i].values
@@ -21,6 +30,14 @@ def kruskal_wallis(data, n_features=16, seed=None):
 
 
 def select_k_best(data, n_features=16, seed=None):
+     """
+    Preforms feature selection using the select_k_best with mutual_info_classif
+    Recieves:
+        data -> data frame
+        n_features -> number of remaining features
+    Returns:
+        keep_features -> list with the naime of the choosen features
+    """
     clf = SelectKBest(mutual_info_classif, k=n_features)
     new_data = clf.fit_transform(data['x'], data['y'].ravel())
     mask = clf.get_support()
@@ -29,6 +46,14 @@ def select_k_best(data, n_features=16, seed=None):
 
 
 def ROC(data, n_features=16, seed=None):
+    """
+    Preforms feature selection using the ROC with LDA classifier
+    Recieves:
+        data -> data frame
+        n_features -> number of remaining features
+    Returns:
+        keep_features -> list with the naime of the choosen features
+    """
     rank = []
     classifier=LinearDiscriminantAnalysis()
     X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(data['x'], data['y'], test_size=0.25, random_state=seed, shuffle=False)
