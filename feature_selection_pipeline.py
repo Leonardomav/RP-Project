@@ -31,7 +31,7 @@ def kruskal_wallis(data, n_features=16, seed=None):
 
 
 def select_k_best(data, n_features=16, seed=None):
-     """
+    """
     Preforms feature selection using the select_k_best with mutual_info_classif
     Recieves:
         data -> data frame

@@ -1,18 +1,20 @@
-import matplotlib
-from test_pipeline import test_pipeline
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.pipeline import Pipeline
-from sklearn.neighbors.nearest_centroid import NearestCentroid
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
-from sklearn.neighbors.kde import KernelDensity
-from sklearn.decomposition import PCA
-from sklearn.naive_bayes import GaussianNB
-import pandas
-from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC
-from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
-import data_preprocessment
 import copy
+
+import matplotlib
+import pandas
+from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors.kde import KernelDensity
+from sklearn.neighbors.nearest_centroid import NearestCentroid
+from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC
+
+import data_preprocessment
+from feature_selection_pipeline import ROC, kruskal_wallis, select_k_best
+from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
+from test_pipeline import test_pipeline
 
 matplotlib.use('TkAgg')
 
