@@ -1,11 +1,17 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
-
-from sklearn import svm, datasets
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.utils.multiclass import unique_labels
+import pandas
+import matplotlib.pyplot as plt
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
+
 
 def plot_confusion_matrix(y_true, y_pred, classes,
                           normalize=False,
@@ -59,3 +65,19 @@ def plot_confusion_matrix(y_true, y_pred, classes,
                     color="white" if cm[i, j] > thresh else "black")
     fig.tight_layout()
     return ax
+
+
+def box_plot_comparison(results):
+    """
+    renders a box plot to compare the multiple classifiers
+    Recieves:
+        results -> from all classifiers
+        data -> dataframe to predict
+    """
+    _names = []
+    fig = plt.figure()
+    fig.suptitle('Algorithm Comparison')
+    ax = fig.add_subplot(111)
+    plt.boxplot(results)
+    ax.set_xticklabels(_names)
+    plt.show()
