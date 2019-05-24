@@ -5,7 +5,7 @@ from statistics import mean
 
 
 def kfold_cross_val_predictions(pipeline, data, seed):
-	 """
+    """
     Preforms KFold prediction with cross validation from cross_val_predict
     Recieves:
         pipeline -> test pipeline
@@ -20,7 +20,7 @@ def kfold_cross_val_predictions(pipeline, data, seed):
 
 
 def train_test_predictions(pipeline, data, seed):
-	"""
+    """
     Preforms train_test_split to split data and fits data to the model and predicts with no validation
     Recieves:
         pipeline -> test pipeline
