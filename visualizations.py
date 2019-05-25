@@ -71,7 +71,7 @@ def box_plot_comparison(results):
     """
     renders a box plot to compare the multiple classifiers
     Recieves:
-        results -> from all classifiers
+        results -> results from all classifiers
         data -> dataframe to predict
     """
     _names = []

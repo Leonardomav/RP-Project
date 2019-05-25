@@ -6,9 +6,12 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.decomposition import PCA
-from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC
+from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC, kernel_density_fs
 from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
 import data_preprocessment as dp
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 
 matplotlib.use('TkAgg')
 
@@ -58,9 +61,6 @@ def GUI(data, data_loc, states, n_features, feature_sel, dim_reduction, predict_
     comb3['values'] = dim
     comb3.current(0)  # set the selected item
     comb3.grid(column=1, row=3, padx=20)
-
-    lbl3 = Label(window, text='N of Features:', font=("Arial", 12))
-    lbl3.grid(column=2, row=3, pady=5, padx=(0, 15), sticky="W")
 
     lbl4 = Label(window, text='Prediction Method:', font=("Arial", 12))
     lbl4.grid(column=0, row=4, pady=5, padx=(10, 0), sticky="W")
@@ -170,12 +170,16 @@ def main():
         ('lda', LinearDiscriminantAnalysis()),
         ('euclidean', NearestCentroid(metric='euclidean')),
         ('mahalanobis', NearestCentroid(metric='mahalanobis')),
+        ('bayes', GaussianNB()),
+        ('knearest_neighbours', KNeighborsClassifier()),
+        ('svm', SVC()),
     ]
 
     feature_selection_functions = [
         None,
         kruskal_wallis,
         select_k_best,
+        kernel_density_fs,
         ROC,
     ]
 

@@ -76,58 +76,43 @@ def main():
     data_less_raw = data_less_raw.drop(['RISK_MM'], axis=1)
 
     # Print general info about the data
-    draft.data_info.print_general_information(data_less_raw)
+    #draft.data_info.print_general_information(data_less_raw)
 
     # Describe a Single Columns
-    draft.data_info.describe_all_columns(data_less_raw)
+    #draft.data_info.describe_all_columns(data_less_raw)
 
     # Print correlation between all features or between two if specified
-    draft.data_info.correlation_info(data_less_raw, 'pearson')
+    #draft.data_info.correlation_info(data_less_raw, 'pearson')
 
     # Print data skew
     # print(data_less_raw.skew())
 
     # Plot the features histogram
-    data_less_raw.hist()
-    matplotlib.pyplot.show()
+    #data_less_raw.hist()
+    #matplotlib.pyplot.show()
 
     # Kruskal_wallis
 
     # change Yes and No to 1 and 0
     #
-    # data = data_less_raw.copy()
     #
-    # data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
-    # data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
-    #
-    # data = categorize_data(data)
-    # data_date_loc = data[['Date', 'Location']]
-    #
-    # data_y = data[['RainTomorrow']]
-    # data_normalized, data_y_norm, x_scaled = normalize_data(data)
-    #
-    # n_comp = 5
-    #
-    # # FEATURE_SELECTION
-    #
-    # n_features = 6
-    # # new_data = features_selection.kruskal_wallis(data_normalized, data_y, n_features)
-    #
-    # new_data = feature_selection.select_k_best(data_normalized, data_y, n_features)
-    # ki=feature_selection_pipeline.select_k_best(data_normalized, data_y, n_features)
-    # # new_data = features_selection.ROC(data_normalized, data_y, n_features)
-    #
-    # # DIM_REDUCTION
-    #
-    # # dim_reduction.variance_feature_PCA(new_data, n_comp)
-    #
-    # # data_PCA = dim_reduction.PCA(data_y, new_data, n_comp)
-    #
-    # # dim_reduction.LDA(data_y, new_data) # doesnt make a lot of sense in this case tbh
-    #
-    # X_train, X_test, y_train, y_test = data_split(new_data, data_y)
-    # # classifiers.Euclidean_MDC(X_train, X_test, y_train, y_test)
-    # # classifiers.Mahalanobis_MDC(X_train, X_test, y_train, y_test)
+    states = ["All"]
+    states.extend(data_less_raw['Location'].unique())
+
+    data = data_less_raw.copy()
+
+    # Categorize
+    data['RainTomorrow'] = data['RainTomorrow'].map({'Yes': 1, 'No': 0})
+    data['RainToday'] = data['RainToday'].map({'Yes': 1, 'No': 0})
+
+    data = categorize_data(data)
+
+    data_y = data['RainTomorrow'].ravel()
+    data_loc = data.drop(['Date'], axis=1)
+
+    data, _, _ = normalize_data(data)
+
+    return {'x': data, 'y': data_y}, states, len(data.columns), data_loc
 
 
 if __name__ == '__main__':
