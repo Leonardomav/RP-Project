@@ -85,6 +85,7 @@ hybrid_data = []
 for region in states:
     aux = data_preprocessment.select_location(copy.deepcopy(data_loc), [region], state_dict)
     hybrid_data.append(aux)
+region = 'All'
 predictions_list = []
 predictions_list.append(test_pipeline_hybrid(
     copy.deepcopy(hybrid_data),
