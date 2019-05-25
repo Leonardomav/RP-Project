@@ -30,9 +30,9 @@ data, states, num_columns, data_loc, state_dict = data_preprocessment.get_prepro
 # NRT - Northen Territoty
 
 states = [
-    "All",
-    #"NSW",
-    #"VIC",
+    #"All",
+    "NSW",
+    "VIC",
     #"QNL",
     #"SAU",
     #"TAS",
