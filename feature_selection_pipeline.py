@@ -4,6 +4,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 import sklearn.model_selection
 from sklearn.metrics import roc_auc_score
 from sklearn.neighbors.kde import KernelDensity
+from sklearn.svm import SVR
 
 import numpy as np
 
@@ -97,4 +98,20 @@ def kernel_density_fs(data, n_features=16, seed=None):
     for i in range(n_features):
         keep_features.append(rank[i][0])
 
+    return keep_features
+
+def RFE_fs(data, n_features=16, seed=None):
+    """
+    Preforms feature selection using the RFE with SVR with linear kernel
+    Recieves:
+        data -> data frame
+        n_features -> number of remaining features
+    Returns:
+        keep_features -> list with the naime of the choosen features
+    """
+    estimator = SVR(kernel="linear")
+    selector = RFE(estimator, n_features)
+    selector = selector.fit(data['x'], data['y'])
+    mask = selector.get_support()
+    keep_features = data['x'].columns[mask]
     return keep_features

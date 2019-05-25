@@ -6,7 +6,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import Pipeline
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.decomposition import PCA
-from feature_selection_pipeline import kruskal_wallis, select_k_best, ROC, kernel_density_fs
+from feature_selection_pipeline import ROC, kruskal_wallis, select_k_best, kernel_density_fs, RFE_fs
 from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
 import data_preprocessment as dp
 from sklearn.naive_bayes import GaussianNB
@@ -16,7 +16,7 @@ from sklearn.svm import SVC
 matplotlib.use('TkAgg')
 
 
-def GUI(data, data_loc, states, n_features, feature_sel, dim_reduction, predict_methods, classifiers):
+def GUI(data, data_loc, states, n_features, feature_sel, dim_reduction, predict_methods, classifiers, state_dict):
     window = Tk()
     window.title("RP - GUI")
     title = Label(window, text='Weather In Australia - GUI', font=("Arial Bold", 20))
@@ -113,41 +113,41 @@ def GUI(data, data_loc, states, n_features, feature_sel, dim_reduction, predict_
                 classifier = i
                 break
 
-        try:
-            print("Run config")
-            if comb0.get() != "All":
-                data = dp.select_location(data_loc, comb0.get())
+        # try:
+        print("Run config")
+        if comb0.get() != "All":
+            data = dp.select_location(data_loc, [comb0.get()], state_dict)
 
-            if comb6.get() == 'mahalanobis' and comb1.get() != "None" and comb3.get() == 'lda-dr':
-                warText.configure(text="This combination is invalid")
-
-            elif comb3.get() != "None":
-                test_pipeline(
-                    data,
-                    Pipeline([
-                        fit_transform_option,
-                        classifier
-                    ]),
-                    seed,
-                    n_features=int(comb2.get()),
-                    feature_selection_function=feature_selection_function,
-                    prediction_function=prediction_function)
-                warText.configure(text="")
-
-            else:
-                test_pipeline(
-                    data,
-                    Pipeline([
-                        classifier
-                    ]),
-                    seed,
-                    n_features=int(comb2.get()),
-                    feature_selection_function=feature_selection_function,
-                    prediction_function=prediction_function)
-                warText.configure(text="")
-        except Exception as e:
-            print(e)
+        if comb6.get() == 'mahalanobis' and comb1.get() != "None" and comb3.get() == 'lda-dr':
             warText.configure(text="This combination is invalid")
+
+        elif comb3.get() != "None":
+            test_pipeline(
+                data,
+                Pipeline([
+                    fit_transform_option,
+                    classifier
+                ]),
+                seed,
+                n_features=int(comb2.get()),
+                feature_selection_function=feature_selection_function,
+                prediction_function=prediction_function)
+            warText.configure(text="")
+
+        else:
+            test_pipeline(
+                data,
+                Pipeline([
+                    classifier
+                ]),
+                seed,
+                n_features=int(comb2.get()),
+                feature_selection_function=feature_selection_function,
+                prediction_function=prediction_function)
+            warText.configure(text="")
+        # except Exception as e:
+        #     print(e)
+        #     warText.configure(text="This combination is invalid")
 
     btn = Button(window, text="Run Configuration", command=lambda: clicked(data))
 
@@ -158,7 +158,7 @@ def GUI(data, data_loc, states, n_features, feature_sel, dim_reduction, predict_
 
 
 def main():
-    data, states, num_columns, data_loc = dp.get_preprocessed_data()
+    data, states, num_columns, data_loc, state_dict = dp.get_preprocessed_data()
 
     fit_transform_options = [
         None,
@@ -181,6 +181,7 @@ def main():
         select_k_best,
         kernel_density_fs,
         ROC,
+        RFE_fs,
     ]
 
     prediction_functions = [
@@ -189,7 +190,7 @@ def main():
     ]
 
     GUI(data, data_loc, states, num_columns, feature_selection_functions, fit_transform_options, prediction_functions,
-        classifiers)
+        classifiers, state_dict)
 
 
 if __name__ == '__main__':

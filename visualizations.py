@@ -74,7 +74,8 @@ def box_plot_comparison(results):
         results -> results from all classifiers
         data -> dataframe to predict
     """
-    _names = []
+
+    _names = ["LDA, None, None" , "LDA, None, SKB", "LDA, PCA, None", "LDA, PCA, SKB" ]
     fig = plt.figure()
     fig.suptitle('Algorithm Comparison')
     ax = fig.add_subplot(111)
