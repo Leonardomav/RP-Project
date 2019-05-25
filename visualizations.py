@@ -67,7 +67,7 @@ def plot_confusion_matrix(y_true, y_pred, classes,
     return ax
 
 
-def box_plot_comparison(results):
+def box_plot_comparison(results, names=None):
     """
     renders a box plot to compare the multiple classifiers
     Recieves:
@@ -75,7 +75,7 @@ def box_plot_comparison(results):
         data -> dataframe to predict
     """
 
-    _names = ["LDA, None, None" , "LDA, None, SKB", "LDA, PCA, None", "LDA, PCA, SKB" ]
+    _names = names if names != None else ["LDA, None, None" , "LDA, None, SKB", "LDA, PCA, None", "LDA, PCA, SKB" ]
     fig = plt.figure()
     fig.suptitle('Algorithm Comparison')
     ax = fig.add_subplot(111)

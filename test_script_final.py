@@ -124,4 +124,4 @@ predictions_list.append(test_pipeline(
     feature_selection_function=RFE_fs,
     prediction_function=kfold_cross_val_predictions).tolist())
 
-visualizations.box_plot_comparison(predictions_list)
+visualizations.box_plot_comparison(predictions_list, ["lda-dr euclidean", "lda-dr lda", "rfe lda", "rfe mahalanobis"])
