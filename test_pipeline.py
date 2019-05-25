@@ -28,7 +28,7 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
         foo = feature_selection_function(data, n_features, seed)
         aux = data['x'][foo]
         data['x'] = aux
-    tested_data, predictions = prediction_function(pipeline, data, seed)
+    tested_data, predictions,results = prediction_function(pipeline, data, seed)
     csv_values.append(str(n_features))
     conf_matrix = confusion_matrix(tested_data, predictions)
     class_report = classification_report(tested_data, predictions, output_dict=True)
@@ -50,4 +50,6 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
             accuracy_score(tested_data, predictions)]
         )
         writer.writerow(csv_values)
+
     print('Done')
+    return results

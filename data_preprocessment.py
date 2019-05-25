@@ -64,6 +64,9 @@ def get_preprocessed_data():
 
     # Remove RISK_MM
     data_less_raw = data_less_raw.drop(['RISK_MM'], axis=1)
+
+    #data_less_raw = data_less_raw[:10000]
+
     states = ["All"]
     states.extend(data_less_raw['Location'].unique())
 
