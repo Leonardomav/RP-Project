@@ -68,7 +68,15 @@ def get_preprocessed_data():
     #data_less_raw = data_less_raw[:10000]
 
     states = ["All"]
-    states.extend(data_less_raw['Location'].unique())
+    state_dict = dict(
+        NSW={'WaggaWagga', 'Canberra', 'NorahHead', 'Cobar', 'Wollongong', 'Albury', 'BadgerysCreek', 'SydneyAirport', 'Moree',
+             'Newcastle', 'CoffsHarbour', 'NorfolkIsland', 'Penrith', 'Williamtown', 'Tuggeranong', 'Sydney', 'MountGinini'},
+        VIC={'Ballarat', 'Nhil', 'Dartmoor', 'MelbourneAirport', 'Sale', 'Melbourne', 'Bendigo', 'Mildura', 'Watsonia',
+             'Richmond', 'Portland'}, QNL={'Brisbane', 'GoldCoast', 'Townsville', 'Cairns'},
+        SAU={'MountGambier', 'Adelaide', 'Woomera', 'Nuriootpa'},
+        WAU={'Albany', 'SalmonGums', 'PearceRAAF', 'Perth', 'Witchcliffe', 'Walpole', 'PerthAirport'},
+        TAS={'Hobart', 'Launceston'}, NRT={'Katherine', 'Darwin', 'AliceSprings', 'Uluru'})
+    states.extend(list(state_dict.keys()))
 
     data = data_less_raw.copy()
 
@@ -83,10 +91,10 @@ def get_preprocessed_data():
 
     data, _, _= normalize_data(data)
 
-    return {'x': data, 'y': data_y}, states, len(data.columns), data_loc
+    return {'x': data, 'y': data_y}, states, len(data.columns), data_loc, state_dict
 
 
-def select_location(data_loc, loc):
+def select_location(data_loc, loc, state_dict):
     """
     This function returns a new data frame with only measurements from the selected location
     Recieves:
@@ -95,7 +103,9 @@ def select_location(data_loc, loc):
     Returns:
         {'x': data, 'y': data_y} -> new data structure 
     """
-    data_loc = data_loc.loc[data_loc['Location'] == loc]
+    cities = []
+    [cities.extend(state_dict[x]) for x in loc]
+    data_loc = data_loc.loc[data_loc['Location'].isin(cities)]
     data_y = data_loc['RainTomorrow'].ravel()
     data_loc = data_loc.drop(['Location', 'RainTomorrow'], axis=1)
 

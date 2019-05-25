@@ -11,38 +11,62 @@ from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 import data_preprocessment
-from feature_selection_pipeline import ROC, kruskal_wallis, select_k_best, kernel_density_fs
+from feature_selection_pipeline import ROC, kruskal_wallis, select_k_best, kernel_density_fs, RFE_fs
 from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
 from test_pipeline import test_pipeline
 import visualizations
 
 matplotlib.use('TkAgg')
 
-data, states, num_columns, data_loc = data_preprocessment.get_preprocessed_data()
+data, states, num_columns, data_loc, state_dict = data_preprocessment.get_preprocessed_data()
+
+
+# NSW - New South Wales
+# VIC - Victoria
+# QNL - Queensland
+# SAU - South Australia
+# TAS - Tasmania
+# WAU - Western Australia
+# NRT - Northen Territoty
+
+states = [
+    #"All",
+    "NSW",
+    "VIC",
+    #"QNL",
+    #"SAU",
+    #"TAS",
+    #"WAU",
+    #"NRT",
+]
+
+if "All" not in states:
+    data = data_preprocessment.select_location(data_loc, states, state_dict)
 
 fit_transform_options = [
-    #None,
-    ('lda-dr', LinearDiscriminantAnalysis()),
-    ('pca', PCA()),
-    #('kernel_density', KernelDensity(kernel='gaussian')),
-    #('knearest_neighbours', KNeighborsClassifier()),
+    None,
+    # ('lda-dr', LinearDiscriminantAnalysis()),
+    # ('pca', PCA()),
+    # ('kernel_density', KernelDensity(kernel='gaussian')),
+    # ('knearest_neighbours', KNeighborsClassifier()),
 ]
 
 classifiers = [
     ('lda', LinearDiscriminantAnalysis()),
-    #('euclidean', NearestCentroid(metric='euclidean')),
-    #('mahalanobis', NearestCentroid(metric='mahalanobis')),
-    ('bayes', GaussianNB()),
-    ('knearest_neighbours', KNeighborsClassifier()),
-    ('svm', SVC()),
+    # ('euclidean', NearestCentroid(metric='euclidean')),
+    # ('mahalanobis', NearestCentroid(metric='mahalanobis')),
+    #('bayes', GaussianNB()),
+    #('knearest_neighbours', KNeighborsClassifier()),
+    #('svm', SVC()),
 ]
 
 feature_selection_functions = [
     # None,
-    kruskal_wallis,
+    # kruskal_wallis,
     select_k_best,
-    kernel_density_fs
+    # kernel_density_fs
     # ROC,
+    # RFE_fs,
 ]
 
 prediction_functions = [
@@ -57,7 +81,7 @@ selected_features = [
     # 16,
 ]
 
-seeds_to_test = 5
+seeds_to_test = 1
 
 predictions_list = []
 for seed in range(seeds_to_test):
