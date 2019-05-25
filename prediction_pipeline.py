@@ -19,7 +19,21 @@ def kfold_cross_val_predictions(pipeline, data, seed):
     results = cross_val_score(pipeline,  data['x'], data['y'], cv=kfold, scoring='accuracy')
     return data['y'], predictions, results
 
-
+def kfold_cross_val_predictions_state(pipeline, data, data_n, seed):
+    """
+    Preforms train_test_split to split data and fits data to the model and predicts with no validation
+    Recieves:
+        pipeline -> test pipeline
+        data -> dataframe to predict
+    Returns:
+        y_test -> real values
+        predictions -> predicted values
+    """
+    X_train, X_test, y_train, y_test = train_test_split(data['x'], data['y'], test_size=0.25, random_state=seed)
+    pipeline.fit(X_train, y_train)
+    predictions = pipeline.predict(data_n['x']) 
+    return data_n['y'], predictions, []
+    
 def train_test_predictions(pipeline, data, seed):
     """
     Preforms train_test_split to split data and fits data to the model and predicts with no validation

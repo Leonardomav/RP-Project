@@ -12,8 +12,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 import data_preprocessment
 from feature_selection_pipeline import ROC, kruskal_wallis, select_k_best, kernel_density_fs, RFE_fs
-from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions
-from test_pipeline import test_pipeline
+from prediction_pipeline import kfold_cross_val_predictions, train_test_predictions, kfold_cross_val_predictions_state
+from test_pipeline import test_pipeline, test_pipeline_state
 import visualizations
 
 matplotlib.use('TkAgg')
@@ -84,7 +84,8 @@ seeds_to_test = 1
 for region in states:
     data_n = data_preprocessment.select_location(copy.deepcopy(data_loc), [region], state_dict)
     predictions_list = []
-    predictions_list.append(test_pipeline(
+    predictions_list.append(test_pipeline_state(
+        copy.deepcopy(data),
         copy.deepcopy(data_n),
         Pipeline([
         ('lda-dr', LinearDiscriminantAnalysis()),
@@ -93,10 +94,11 @@ for region in states:
         1,
         n_features=5,
         feature_selection_function=None,
-        prediction_function=kfold_cross_val_predictions,
-        region=region).tolist())
+        prediction_function=kfold_cross_val_predictions_state,
+        region=region))
 
-    predictions_list.append(test_pipeline(
+    predictions_list.append(test_pipeline_state(
+        copy.deepcopy(data),
         copy.deepcopy(data_n),
         Pipeline([
         ('lda-dr', LinearDiscriminantAnalysis()),
@@ -105,10 +107,11 @@ for region in states:
         1,
         n_features=5,
         feature_selection_function=None,
-        prediction_function=kfold_cross_val_predictions,
-        region=region).tolist())
+        prediction_function=kfold_cross_val_predictions_state,
+        region=region))
 
-    predictions_list.append(test_pipeline(
+    predictions_list.append(test_pipeline_state(
+        copy.deepcopy(data),
         copy.deepcopy(data_n),
         Pipeline([
         ('lda', LinearDiscriminantAnalysis()),
@@ -116,10 +119,11 @@ for region in states:
         1,
         n_features=5,
         feature_selection_function=RFE_fs,
-        prediction_function=kfold_cross_val_predictions,
-        region=region).tolist())
+        prediction_function=kfold_cross_val_predictions_state,
+        region=region))
 
-    predictions_list.append(test_pipeline(
+    predictions_list.append(test_pipeline_state(
+        copy.deepcopy(data),
         copy.deepcopy(data_n),
         Pipeline([
         ('mahalanobis', NearestCentroid(metric='mahalanobis')),
@@ -127,7 +131,7 @@ for region in states:
         1,
         n_features=5,
         feature_selection_function=RFE_fs,
-        prediction_function=kfold_cross_val_predictions,
-        region=region).tolist())
+        prediction_function=kfold_cross_val_predictions_state,
+        region=region))
 
 #visualizations.box_plot_comparison(predictions_list, ["lda-dr euclidean", "lda-dr lda", "rfe lda", "rfe mahalanobis"])
