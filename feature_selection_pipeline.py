@@ -102,14 +102,14 @@ def kernel_density_fs(data, n_features=16, seed=None):
 
 def RFE_fs(data, n_features=16, seed=None):
     """
-    Preforms feature selection using the RFE with SVR with linear kernel
+    Preforms feature selection using the RFE with LDA
     Recieves:
         data -> data frame
         n_features -> number of remaining features
     Returns:
         keep_features -> list with the naime of the choosen features
     """
-    estimator = SVR(kernel="linear")
+    estimator = LinearDiscriminantAnalysis()
     selector = RFE(estimator, n_features)
     selector = selector.fit(data['x'], data['y'])
     mask = selector.get_support()
