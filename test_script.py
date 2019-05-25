@@ -30,9 +30,9 @@ data, states, num_columns, data_loc, state_dict = data_preprocessment.get_prepro
 # NRT - Northen Territoty
 
 states = [
-    #"All",
-    "NSW",
-    "VIC",
+    "All",
+    #"NSW",
+    #"VIC",
     #"QNL",
     #"SAU",
     #"TAS",
@@ -44,26 +44,24 @@ if "All" not in states:
     data = data_preprocessment.select_location(data_loc, states, state_dict)
 
 fit_transform_options = [
-    None,
-    # ('lda-dr', LinearDiscriminantAnalysis()),
-    # ('pca', PCA()),
-    # ('kernel_density', KernelDensity(kernel='gaussian')),
-    # ('knearest_neighbours', KNeighborsClassifier()),
+    #None,
+    ('lda-dr', LinearDiscriminantAnalysis()),
+    ('pca', PCA()),
 ]
 
 classifiers = [
-    ('lda', LinearDiscriminantAnalysis()),
-    # ('euclidean', NearestCentroid(metric='euclidean')),
-    # ('mahalanobis', NearestCentroid(metric='mahalanobis')),
+    #('lda', LinearDiscriminantAnalysis()),
+     ('euclidean', NearestCentroid(metric='euclidean')),
+     ('mahalanobis', NearestCentroid(metric='mahalanobis')),
     #('bayes', GaussianNB()),
     #('knearest_neighbours', KNeighborsClassifier()),
     #('svm', SVC()),
 ]
 
 feature_selection_functions = [
-    # None,
+    None,
     # kruskal_wallis,
-    select_k_best,
+    #select_k_best,
     # kernel_density_fs
     # ROC,
     # RFE_fs,
@@ -90,6 +88,8 @@ for seed in range(seeds_to_test):
             for feature_selection_function in feature_selection_functions:
                 for prediction_function in prediction_functions:
                     for n_feature in selected_features:
+                        if fit_transform_option is not None and fit_transform_option[0] == 'pca':
+                            fit_transform_option = ('pca', PCA(n_components=n_feature))
                         if classifier[0] == 'mahalanobis' and fit_transform_option is not None and fit_transform_option[
                             0] == 'lda-dr':
                             pass
