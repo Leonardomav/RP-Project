@@ -9,7 +9,7 @@ from visualizations import plot_confusion_matrix
 
 
 def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_function=None, prediction_function=None,
-                  visual=False):
+                  visual=False, region='All'):
     csv_values = [str(datetime.datetime.now())]
     procedure_name_list = ''
     for procedure in pipeline.named_steps:
@@ -32,6 +32,7 @@ def test_pipeline(data, pipeline, seed, n_features=16, feature_selection_functio
     csv_values.append(str(n_features))
     conf_matrix = confusion_matrix(tested_data, predictions)
     class_report = classification_report(tested_data, predictions, output_dict=True)
+    csv_values.append(region)
     if visual:
         plot_confusion_matrix(tested_data, predictions, [0, 1],
                               normalize=False,

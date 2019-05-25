@@ -30,14 +30,14 @@ data, states, num_columns, data_loc, state_dict = data_preprocessment.get_prepro
 # NRT - Northen Territoty
 
 states = [
-    "All",
-    #"NSW",
-    #"VIC",
-    #"QNL",
-    #"SAU",
-    #"TAS",
-    #"WAU",
-    #"NRT",
+    #"All",
+    "NSW",
+    "VIC",
+    "QNL",
+    "SAU",
+    "TAS",
+    "WAU",
+    "NRT",
 ]
 
 if "All" not in states:
@@ -81,47 +81,52 @@ selected_features = [
 
 seeds_to_test = 1
 
-predictions_list = []
-predictions_list.append(test_pipeline(
-    copy.deepcopy(data),
-    Pipeline([
-    ('lda-dr', LinearDiscriminantAnalysis()),
-    ('euclidean', NearestCentroid(metric='euclidean')),
-    ]),
-    1,
-    n_features=5,
-    feature_selection_function=None,
-    prediction_function=kfold_cross_val_predictions).tolist())
+for region in states:
+    predictions_list = []
+    predictions_list.append(test_pipeline(
+        copy.deepcopy(data),
+        Pipeline([
+        ('lda-dr', LinearDiscriminantAnalysis()),
+        ('euclidean', NearestCentroid(metric='euclidean')),
+        ]),
+        1,
+        n_features=5,
+        feature_selection_function=None,
+        prediction_function=kfold_cross_val_predictions,
+        region=region).tolist())
 
-predictions_list.append(test_pipeline(
-    copy.deepcopy(data),
-    Pipeline([
-    ('lda-dr', LinearDiscriminantAnalysis()),
-    ('lda', LinearDiscriminantAnalysis()),
-    ]),
-    1,
-    n_features=5,
-    feature_selection_function=None,
-    prediction_function=kfold_cross_val_predictions).tolist())
+    predictions_list.append(test_pipeline(
+        copy.deepcopy(data),
+        Pipeline([
+        ('lda-dr', LinearDiscriminantAnalysis()),
+        ('lda', LinearDiscriminantAnalysis()),
+        ]),
+        1,
+        n_features=5,
+        feature_selection_function=None,
+        prediction_function=kfold_cross_val_predictions,
+        region=region).tolist())
 
-predictions_list.append(test_pipeline(
-    copy.deepcopy(data),
-    Pipeline([
-    ('lda', LinearDiscriminantAnalysis()),
-    ]),
-    1,
-    n_features=5,
-    feature_selection_function=RFE_fs,
-    prediction_function=kfold_cross_val_predictions).tolist())
+    predictions_list.append(test_pipeline(
+        copy.deepcopy(data),
+        Pipeline([
+        ('lda', LinearDiscriminantAnalysis()),
+        ]),
+        1,
+        n_features=5,
+        feature_selection_function=RFE_fs,
+        prediction_function=kfold_cross_val_predictions,
+        region=region).tolist())
 
-predictions_list.append(test_pipeline(
-    copy.deepcopy(data),
-    Pipeline([
-     ('mahalanobis', NearestCentroid(metric='mahalanobis')),
-    ]),
-    1,
-    n_features=5,
-    feature_selection_function=RFE_fs,
-    prediction_function=kfold_cross_val_predictions).tolist())
+    predictions_list.append(test_pipeline(
+        copy.deepcopy(data),
+        Pipeline([
+        ('mahalanobis', NearestCentroid(metric='mahalanobis')),
+        ]),
+        1,
+        n_features=5,
+        feature_selection_function=RFE_fs,
+        prediction_function=kfold_cross_val_predictions,
+        region=region).tolist())
 
-visualizations.box_plot_comparison(predictions_list, ["lda-dr euclidean", "lda-dr lda", "rfe lda", "rfe mahalanobis"])
+#visualizations.box_plot_comparison(predictions_list, ["lda-dr euclidean", "lda-dr lda", "rfe lda", "rfe mahalanobis"])
