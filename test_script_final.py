@@ -40,8 +40,8 @@ states = [
     "NRT",
 ]
 
-if "All" not in states:
-    data = data_preprocessment.select_location(data_loc, states, state_dict)
+#if "All" not in states:
+#    data = data_preprocessment.select_location(data_loc, states, state_dict)
 
 fit_transform_options = [
     #None,
@@ -82,9 +82,10 @@ selected_features = [
 seeds_to_test = 1
 
 for region in states:
+    data_n = data_preprocessment.select_location(copy.deepcopy(data_loc), [region], state_dict)
     predictions_list = []
     predictions_list.append(test_pipeline(
-        copy.deepcopy(data),
+        copy.deepcopy(data_n),
         Pipeline([
         ('lda-dr', LinearDiscriminantAnalysis()),
         ('euclidean', NearestCentroid(metric='euclidean')),
@@ -96,7 +97,7 @@ for region in states:
         region=region).tolist())
 
     predictions_list.append(test_pipeline(
-        copy.deepcopy(data),
+        copy.deepcopy(data_n),
         Pipeline([
         ('lda-dr', LinearDiscriminantAnalysis()),
         ('lda', LinearDiscriminantAnalysis()),
@@ -108,7 +109,7 @@ for region in states:
         region=region).tolist())
 
     predictions_list.append(test_pipeline(
-        copy.deepcopy(data),
+        copy.deepcopy(data_n),
         Pipeline([
         ('lda', LinearDiscriminantAnalysis()),
         ]),
@@ -119,7 +120,7 @@ for region in states:
         region=region).tolist())
 
     predictions_list.append(test_pipeline(
-        copy.deepcopy(data),
+        copy.deepcopy(data_n),
         Pipeline([
         ('mahalanobis', NearestCentroid(metric='mahalanobis')),
         ]),
